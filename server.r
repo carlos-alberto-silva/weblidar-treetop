@@ -122,7 +122,6 @@ cone3d <- function(base=c(0,0,0),tip=c(0,0,1),rad=1,n=30,draw.base=TRUE,qmesh=FA
 }     
 
 output$summary <- renderTable({
-
   output$pageviews <-  renderText({
     if (!file.exists("pageviews.Rdata")) pageviews <- 0 else load(file="pageviews.Rdata")
     pageviews <- pageviews + 1
@@ -291,6 +290,22 @@ for(i in 1:nrow(temp)) {
 
 
 output$hist <- renderPlot({
+  if ((input$plotProfile)=="plotRipley") {
+    S <- SpatialPointsDataFrame(coords= cbind(newDataTree[,1],newDataTree[,2]), data = newDataTree)
+    proj4string(S) <- projection_chmASCII
+    SP <- as(S, "SpatialPoints")
+    P  <- as(SP, "ppp")
+    P <- spatstat::as.ppp(sp::coordinates(S), raster::extent(S)[])
+    K <- spatstat::envelope(P, spatstat::Kest, nsim = 99, verbose = F)
+    L <- spatstat::envelope(P, spatstat::Lest, nsim = 99, verbose = F)
+    CE <- spatstat::clarkevans.test(P)
+    par(mfrow = c(1, 3), mar = c(8, 5, 4, 3))
+    plot(K, lwd=2,main="a) K",xlab = "r (m)",cex.lab=1.5)
+    legend("bottomright", cex=1.2,legend=c("Clark Evans test", paste0("R=",round(CE[1][[1]],4)),paste0("p-value=",round(CE[2][[1]],4))), bty="n")
+    plot(L, lwd=2,main="b) L",xlab = "r (m)",cex.lab=1.5)
+    plot(L, . -r ~ r, ylab=expression(hat("L")), xlab = "r (m)", main="c) L", lwd=2,cex.lab=1.5)
+ 
+  } else {
   par(mfrow=c(1,2), mar=c(4.5,4,2,5))
   chmASCII.df<-data.frame(chmASCII)
   isolate({
@@ -300,7 +315,7 @@ output$hist <- renderPlot({
   dens<-density(chmASCII.df[,1],adjust = 1.3, kernel = "gaussian")
   plot(dens$y,dens$x, col="black",xlab="Density",ylab="Height (m)",type="line",lwd="1",ylim=c(0,max(chmASCII.df[,1]*1.3))) 
   polygon(dens$y,dens$x, col="forestgreen", border="black")
-  boxplot(chmASCII.df[,1],ylim=c(0,max(chmASCII.df[,1])*1.3),horizontal=F, col="forestgreen",ylab="Height (m)")
+  boxplot(chmASCII.df[,1],ylim=c(0,max(chmASCII.df[,1])*1.3),horizontal=F, col="forestgreen",ylab="Height (m)")}
   },height = 360,width=850)
 
 isolate({
@@ -324,9 +339,57 @@ isolate({
     contentType = 'image/png'
   )})
 
+
+# download Ripley's K and L figure
 isolate({
-    
+  output$downloadRipley <- downloadHandler(
+    filename <- function() {
+      paste("Ripley's_K_L",input$chm, Sys.Date(),'.png',sep='')},
+    content <- function(file) {
+      png(file, width = 1200, height = 600, units = "px", pointsize = 12,
+          bg = "white", res = 100)
+      
+      S <- SpatialPointsDataFrame(coords= cbind(newDataTree[,1],newDataTree[,2]), data = newDataTree)
+      proj4string(S) <- projection_chmASCII
+      SP <- as(S, "SpatialPoints")
+      P  <- as(SP, "ppp")
+      P <- spatstat::as.ppp(sp::coordinates(S), raster::extent(S)[])
+      K <- spatstat::envelope(P, spatstat::Kest, nsim = 99, verbose = F)
+      L <- spatstat::envelope(P, spatstat::Lest, nsim = 99, verbose = F)
+      CE<-clarkevans.test(P)
+      par(mfrow = c(1, 3), mar = c(8, 5, 4, 3))
+      plot(K, lwd=2,main="a) K",xlab = "r (m)",cex.lab=1.5)
+      legend("bottomright", cex=1.2,legend=c("Clark Evans test", paste0("R=",round(CE[1][[1]],4)),paste0("p-value=",round(CE[2][[1]],4))), bty="n")
+      plot(L, lwd=2,main="b) L",xlab = "r (m)",cex.lab=1.5)
+      plot(L, . -r ~ r, ylab=expression(hat("L")), xlab = "r (m)", main="c) L", lwd=2,cex.lab=1.5)
+            dev.off()},
+    contentType = 'image/png'
+  )})
+
+
+isolate({
+  output$downloadCHM2d <- downloadHandler(
+    filename <- function() {
+      paste("Lorenz_curve",input$chm, Sys.Date(),'.png',sep='')},
+    content <- function(file) {
+      png(file, width = 1200, height = 600, units = "px", pointsize = 12,
+          bg = "white", res = 100)
+      
+      plot(1,1, lwd=2,main="a) K",xlab = "r (m)",cex.lab=1.5)
+      dev.off()
+      },
+    contentType = 'image/png'
+  )})
+
+isolate({
 output$CHMplot2D <- renderPlot({
+  
+  if ((input$plotCHM2d)=="plotlorenzcurve") {
+    
+    plot(1,1, lwd=2,main="a) K",xlab = "r (m)",cex.lab=1.5)
+
+      } else {
+    
   chmASCII.df<-data.frame(chmASCII)
   colS<-input$Pallet
   
@@ -355,7 +418,11 @@ output$CHMplot2D <- renderPlot({
   for ( i in 1:length(temp[,1])) {
     col<-c(1:length(temp[,1]))
     draw.circle(x=temp[i,1],y=temp[i,2],(temp[i,4])/2,border=col[i],lty=1,lwd=1)
-  } },height = 570,width=640) })
+  }}
+  },height = 570,width=640) 
+
+
+})
 
 isolate({
 output$downloadCHMprint <- downloadHandler(
@@ -403,8 +470,6 @@ newDataTree<-cbind(temp,AreaPolyTree)
 colnames(newDataTree)<-c("x","y","Height","CW", "CA")
 
 output$downloadShpR <- renderUI({div(style="margin-left:0px;margin-top: -5px;width:300px",downloadButton('downloadShp', 'Tree Crown (.shp)')) })
-
-
 createShp <- reactive({
   myXY<-temp
   if (is.null(myXY)){
@@ -450,7 +515,6 @@ createShp <- reactive({
 
 
 output$downloadShp <- downloadHandler(
-  
   filename = 'TreeCrownExport.zip',
   content = function(file) {
     if (length(Sys.glob("TreeCrownExport.*"))>0){
@@ -574,12 +638,24 @@ output$TreelistR <- renderUI({div(style="margin-left:55px;margin-top: -30px;widt
 
 
 output$Profile <- renderUI({
+  if ((input$plotProfile)=="plotRipley") {
+    div(style = "margin-top: -70px;margin-left:50px",
+        downloadButton('downloadRipley', "Download Ripley's K and L"))
+  } else {
   div(style = "margin-top: -70px;margin-left:390px",
   downloadButton('downloadTable', 'Download LiDAR metrics'),
-  downloadButton('downloadHist', 'Download CHM Profile'),
-  downloadButton('downloadCHMprint', 'Download CHM'))
-})
+  downloadButton('downloadHist', 'Download CHM Profile'))
+ }})
 
+
+output$outCHMplot2D <- renderUI({
+  if ((input$plotCHM2d)=="plotlorenzcurve") {
+    div(style = "margin-top: 130px;margin-left:400px",
+        downloadButton('downloadCHM2d', "Download Lorenz Curve"))
+  } else {
+    div(style = "margin-top: 130px;margin-left:400px",
+        downloadButton('downloadCHMprint', 'Download CHM'))
+  }})
 
 isolate ({
   output$downloadTreesLoc <- downloadHandler(
