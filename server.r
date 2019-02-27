@@ -39,7 +39,7 @@ library(rglwidget)
 #require(devtools)
 #require(shiny)
 #install_github("trestletech/ShinyDash")
-#library(ShinyDash)
+library(ShinyDash)
 
 ################################################################################
 ################################################################################
