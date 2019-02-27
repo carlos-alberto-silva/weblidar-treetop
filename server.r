@@ -125,6 +125,19 @@ cone3d <- function(base=c(0,0,0),tip=c(0,0,1),rad=1,n=30,draw.base=TRUE,qmesh=FA
     return(rotate3d(qmesh3d(v,i,material=...), matrix=trans))
 }     
 
+GiniCoeff <- function (x, finite.sample = TRUE, na.rm = TRUE){
+  if (!na.rm && any(is.na(x))) 
+    return(NA_real_)
+  x <- as.numeric(stats::na.omit(x))
+  n <- length(x)
+  x <- sort(x)
+  G <- 2 * sum(x * 1L:n)/sum(x) - (n + 1L)
+  if (finite.sample) 
+    GC <- G/(n - 1L)
+  else GC <- G/n
+  return(GC)
+}
+
 output$summary <- renderTable({
   output$pageviews <-  renderText({
     if (!file.exists("pageviews.Rdata")) pageviews <- 0 else load(file="pageviews.Rdata")
@@ -380,6 +393,9 @@ isolate({
           bg = "white", res = 100)
       
       size <- newDataTree$Height
+      L.mean <-  max(cumsum(sort(size[size>=mean(size)],T)/sum(size)))
+      GC <- GiniCoeff(size)
+      
       par(mar=c(8,4,2,10))
       plot(c(0,1), c(0,1), type="l", col="grey", ylim=(0:1), xlim=c(0,1), lty=1, lwd=3,xlab="", ylab="", box=FALSE)
       title(ylab=expression(paste("Accummulated proportion of tree heights (", italic(H), " ; m)" )),
@@ -393,7 +409,7 @@ isolate({
             c(0,cumsum(sort(size,T)/sum(size))),
             lty=1,lwd=2)
       points(length(size[size>=mean(size)])/length(size),
-             max(cumsum(sort(size[size>=mean(size)],T)/sum(size))),
+             L.mean,
              pch=10,cex=2.5,lwd=2)	
       legend("bottomright", c("Lorenz curve",
                               expression(paste("mean ", italic(H), " (inflexion point)")),
@@ -409,6 +425,9 @@ isolate({
              border=c("white", "white",NA, "gray",NA),
              x.intersp=c(.4,.4,.4,.001,.001),
              box.lwd = NA)
+      text(.5,.4, "Gini coefficient = ", pos = 4); text(.75,.4,format(GC,digits=2), pos = 4 )
+      text(.5,.35, "Proportion above the mean = ", pos = 4); text(.9,.35,format(L.mean,digits=2), pos = 4 )
+      
       
       dev.off()
       },
@@ -421,6 +440,9 @@ output$CHMplot2D <- renderPlot({
   if ((input$plotCHM2d)=="plotlorenzcurve") {
     
     size <- newDataTree$Height
+    L.mean <-  max(cumsum(sort(size[size>=mean(size)],T)/sum(size)))
+    GC <- GiniCoeff(size)
+    
     par(mar=c(8,4,2,10))
     plot(c(0,1), c(0,1), type="l", col="grey", ylim=(0:1), xlim=c(0,1), lty=1, lwd=3,xlab="", ylab="", box=FALSE)
     title(ylab=expression(paste("Accummulated proportion of tree heights (", italic(H), " ; m)" )),
@@ -434,7 +456,7 @@ output$CHMplot2D <- renderPlot({
           c(0,cumsum(sort(size,T)/sum(size))),
           lty=1,lwd=2)
     points(length(size[size>=mean(size)])/length(size),
-           max(cumsum(sort(size[size>=mean(size)],T)/sum(size))),
+           L.mean,
            pch=10,cex=2.5,lwd=2)	
     legend("bottomright", c("Lorenz curve",
                             expression(paste("mean ", italic(H), " (inflexion point)")),
@@ -450,6 +472,8 @@ output$CHMplot2D <- renderPlot({
                             border=c("white", "white",NA, "gray",NA),
                             x.intersp=c(.4,.4,.4,.001,.001),
                             box.lwd = NA)
+    text(.5,.4, "Gini coefficient = ", pos = 4); text(.75,.4,format(GC,digits=2), pos = 4 )
+    text(.5,.35, "Proportion above the mean = ", pos = 4); text(.9,.35,format(L.mean,digits=2), pos = 4 )
     
       } else {
     
