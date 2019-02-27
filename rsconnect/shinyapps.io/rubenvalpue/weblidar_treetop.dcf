@@ -1,0 +1,12 @@
+name: weblidar_treetop
+title: weblidar_treetop
+username:
+account: rubenvalpue
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 740602
+bundleId: 1903481
+url: https://rubenvalpue.shinyapps.io/weblidar_treetop/
+when: 1551273670.27995
+asMultiple: FALSE
+asStatic: FALSE
