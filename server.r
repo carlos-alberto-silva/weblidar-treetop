@@ -376,7 +376,7 @@ isolate({
     filename <- function() {
       paste("Lorenz_curve",input$chm, Sys.Date(),'.png',sep='')},
     content <- function(file) {
-      png(file, width = 600, height = 600, units = "px", pointsize = 12,
+      png(file, width = 700, height = 600, units = "px", pointsize = 12,
           bg = "white", res = 100)
       
       size <- newDataTree$Height
