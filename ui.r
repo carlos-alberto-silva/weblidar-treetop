@@ -19,9 +19,18 @@
 options(rgl.useNULL=TRUE) 
 #library(shiny)
 #library(shinyRGL)
-library(ShinyDash)
-#library(shinyGridster)
+#library(ShinyDash)
 #library(shinyIncubator)
+
+#require(devtools)
+#require(shiny)
+#install_github("wch/shiny-gridster")
+library(shinyGridster)
+
+#require(devtools)
+#require(shiny)
+#install_github("trestletech/ShinyDash")
+#library(ShinyDash)
 
 ################################################################################
 

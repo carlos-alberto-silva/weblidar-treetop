@@ -33,9 +33,13 @@ library(rgl)
 library(shiny)
 #library(shinyRGL)
 #library(shinyGridster)
-library(ShinyDash)
 #library(shinyIncubator)
 library(rglwidget)
+
+#require(devtools)
+#require(shiny)
+#install_github("trestletech/ShinyDash")
+#library(ShinyDash)
 
 ################################################################################
 ################################################################################
@@ -386,8 +390,11 @@ output$CHMplot2D <- renderPlot({
   
   if ((input$plotCHM2d)=="plotlorenzcurve") {
     
-    plot(1,1, lwd=2,main="a) K",xlab = "r (m)",cex.lab=1.5)
-
+    plot(c(0,1), c(0,1), type="l", col="grey", ylim=(0:1), xlim=c(0,1), lty=1, lwd=3,xlab="", ylab="", box=FALSE)
+    title(ylab=expression(paste("accum. prop. of tree heights ( ", italic(H), " ; m)" )),
+          xlab=expression(paste("accum. prop. of number of trees ")),
+          line=2.5,cex.lab=1)
+    
       } else {
     
   chmASCII.df<-data.frame(chmASCII)
