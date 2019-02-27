@@ -376,10 +376,40 @@ isolate({
     filename <- function() {
       paste("Lorenz_curve",input$chm, Sys.Date(),'.png',sep='')},
     content <- function(file) {
-      png(file, width = 1200, height = 600, units = "px", pointsize = 12,
+      png(file, width = 600, height = 600, units = "px", pointsize = 12,
           bg = "white", res = 100)
       
-      plot(1,1, lwd=2,main="a) K",xlab = "r (m)",cex.lab=1.5)
+      size <- newDataTree$Height
+      par(mar=c(8,4,2,10))
+      plot(c(0,1), c(0,1), type="l", col="grey", ylim=(0:1), xlim=c(0,1), lty=1, lwd=3,xlab="", ylab="", box=FALSE)
+      title(ylab=expression(paste("Accummulated proportion of tree heights (", italic(H), " ; m)" )),
+            xlab=expression(paste("Accummulated proportion of number of trees ")),
+            line=2.5,cex.lab=1)
+      polygon(c(0,seq(0,1,length.out=1000)),
+              c(0,cumsum(seq(100,2,length.out=1000)/sum(seq(100,2,length.out=1000)))), 
+              col="grey", lty=0)	
+      lines(c(.5,0),c(.5,1),lty=3,lwd=4,col="grey"); lines(c(.5,.4),c(.5,.6),lty=3,lwd=4,col="white")	
+      lines(c(0,seq(0,1,length.out=length(size))),
+            c(0,cumsum(sort(size,T)/sum(size))),
+            lty=1,lwd=2)
+      points(length(size[size>=mean(size)])/length(size),
+             max(cumsum(sort(size[size>=mean(size)],T)/sum(size))),
+             pch=10,cex=2.5,lwd=2)	
+      legend("bottomright", c("Lorenz curve",
+                              expression(paste("mean ", italic(H), " (inflexion point)")),
+                              "axis of symmetry",
+                              "maximum entropy and",
+                              "absolute equality lines"),
+             col=c("black","black","grey",NA,NA),
+             pch=c(NA,10,NA,NA,NA),
+             lty=c("solid",NA,"dotted",NA,NA),
+             lwd=c(2,2,3,NA,NA),
+             pt.cex = c(NA,2,NA,NA,NA),
+             fill=c(NA, NA, NA, "gray",NA),
+             border=c("white", "white",NA, "gray",NA),
+             x.intersp=c(.4,.4,.4,.001,.001),
+             box.lwd = NA)
+      
       dev.off()
       },
     contentType = 'image/png'
