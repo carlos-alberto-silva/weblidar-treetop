@@ -390,11 +390,22 @@ output$CHMplot2D <- renderPlot({
   
   if ((input$plotCHM2d)=="plotlorenzcurve") {
     
+    size <- newDataTree$Height
+    par(mar=c(8,4,2,10))
     plot(c(0,1), c(0,1), type="l", col="grey", ylim=(0:1), xlim=c(0,1), lty=1, lwd=3,xlab="", ylab="", box=FALSE)
-    title(ylab=expression(paste("accum. prop. of tree heights ( ", italic(H), " ; m)" )),
+    title(ylab=expression(paste("accum. prop. of tree heights (", italic(H), " ; m)" )),
           xlab=expression(paste("accum. prop. of number of trees ")),
           line=2.5,cex.lab=1)
-    
+    polygon(c(0,seq(0,1,length.out=1000)),
+            c(0,cumsum(seq(100,2,length.out=1000)/sum(seq(100,2,length.out=1000)))), 
+            col="grey", lty=0)	
+    lines(c(.5,0),c(.5,1),lty=3,lwd=4,col="grey"); lines(c(.5,.4),c(.5,.6),lty=3,lwd=4,col="white")	
+    lines(c(0,seq(0,1,length.out=length(size))),
+          c(0,cumsum(sort(size,T)/sum(size))),
+          lty=1,lwd=2)
+    points(length(size[size>=mean(size)])/length(size),
+           max(cumsum(sort(size[size>=mean(size)],T)/sum(size))),
+           pch=10,cex=2,lwd=2)		
       } else {
     
   chmASCII.df<-data.frame(chmASCII)
