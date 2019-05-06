@@ -35,18 +35,22 @@ library(shiny)
 #library(shinyGridster)
 #library(shinyIncubator)
 library(rglwidget)
-
+library(lidR)
+#if (!requireNamespace("BiocManager", quietly = TRUE))
+#  install.packages("BiocManager")
+#BiocManager::install()
 #require(devtools)
 #require(shiny)
 #install_github("trestletech/ShinyDash")
 library(ShinyDash)
+#library(cda)
 
 ################################################################################
 ################################################################################
 
 ################################################################################
 # server.r
-options(shiny.maxRequestSize= 50*1024^2)
+options(shiny.maxRequestSize= 100*1024^2)
 options(shiny.deprecation.messages=FALSE)	
 shinyServer(function(input, output, session) {
 
@@ -138,6 +142,48 @@ GiniCoeff <- function (x, finite.sample = TRUE, na.rm = TRUE){
   return(GC)
 }
 
+# code from cda package
+rgl.ellipsoid <- function (x=0, y=0, z=0, a = 1, b=1, c=1, phi=0, theta=0, psi=0,
+                           subdivide = 3, smooth = TRUE, ...)
+{
+  
+  sphere <- rgl::subdivision3d(rgl::cube3d(...), subdivide)
+  class(sphere) <- c("mesh3d","shape3d")
+  
+  norm <- sqrt(sphere$vb[1, ]^2 + 
+                 sphere$vb[2, ]^2 + 
+                 sphere$vb[3, ]^2 )
+  for (i in 1:3) sphere$vb[i, ] <- sphere$vb[i, ]/norm
+  sphere$vb[4, ] <- 1
+  sphere$normals <- sphere$vb
+  result <- rgl::scale3d(sphere, a,b,c)
+  #rotM <- cpp_euler_passive(phi,theta,psi)
+  #result <- rgl::rotate3d(result,matrix=rotM)
+  result <- rgl::translate3d(result, x,y,z)
+  invisible(result)
+}
+rgl.ellipsoids <- function(positions, sizes, angles, colour = "red", ...){
+  
+  N <- NCOL(positions)
+  colours <- rep(colour, length.out=N)
+  ll <- lapply(seq(1,N), function(ii)
+    rgl.ellipsoid(positions[1,ii],positions[2,ii],positions[3,ii],
+                  sizes[1,ii],sizes[2,ii],sizes[3,ii],
+                  angles[1,ii],angles[2,ii],angles[3,ii], col = colours[ii], ...))
+  
+  rgl::shapelist3d(ll)
+  
+}
+
+rgl_annotate <- function(){
+  rgl::axes3d( labels = FALSE, tick = FALSE, edges=c("x", "y", "z") )
+  rgl::axis3d(labels = FALSE, tick = FALSE, 'x',pos=c(NA, 0, 0))
+  rgl::axis3d(labels = FALSE, tick = FALSE, 'y',pos=c(0, NA, 0))
+  rgl::axis3d(labels = FALSE, tick = FALSE, 'z',pos=c(0, 0, NA))
+  rgl::title3d('','','x axis','y axis','z axis')
+}
+
+####################################
 output$summary <- renderTable({
   output$pageviews <-  renderText({
     if (!file.exists("pageviews.Rdata")) pageviews <- 0 else load(file="pageviews.Rdata")
@@ -281,10 +327,14 @@ isolate({
 })
 
 
+#print(paste0(nrow(tree),"........."))
+
 temp<-tree
-for(i in 1:nrow(temp)) { 
-  isolate({
-    Sys.sleep(0.02)
+
+if ((input$radiustype)=="VR") {
+#for(i in 1:nrow(temp)) { 
+isolate({
+    #Sys.sleep(0.02)
       
     Ang<-as.numeric(input$Ang)
     ht1<-as.numeric(input$ht1)
@@ -293,17 +343,46 @@ for(i in 1:nrow(temp)) {
     width<-as.numeric(input$frv)   
     # equation from Popescu and Wynne
     # http://asprs.org/a/publications/pers/2004journal/may/2004_may_589-604.pdf
-    if ((input$radiustype)=="FR") {temp[i,4]<-width} 
     
     if ((input$radiustype)=="VR") {
-      if ((input$equation)=="DC") {temp[i,4] <- (3.09632 + 0.00895*(temp[i,3]*temp[i,3]))} 
-      if ((input$equation)=="PI") {temp[i,4] <- (3.75105 + 0.17919*(temp[i,3]) + 0.01241*(temp[i,3]*(temp[i,3])))} 
-      if ((input$equation)=="CB") {temp[i,4]<-(2.51503+0.00901*(temp[i,3]*temp[i,3]))}
-      if ((input$equation)=="YR") {temp[i,4]<-Ang+ht1*temp[i,3]+ht2*(temp[i,3]*temp[i,3]) + ht3*(temp[i,3]*temp[i,3]*temp[i,3])}
-    } 
+      if ((input$equation)=="DC") {temp[,4] <- (3.09632 + 0.00895*(temp[,3]*temp[,3]))} 
+      if ((input$equation)=="PI") {temp[,4] <- (3.75105 + 0.17919*(temp[,3]) + 0.01241*(temp[,3]*(temp[,3])))} 
+      if ((input$equation)=="CB") {temp[,4]<-(2.51503+0.00901*(temp[,3]*temp[,3]))}
+      if ((input$equation)=="YR") {temp[,4]<-Ang+ht1*temp[,3]+ht2*(temp[,3]*temp[,3]) + ht3*(temp[,3]*temp[,3]*temp[,3])}
+    }
+    
+    temp[,5]<-pi*(temp[,4]/2)^2
+    
   })
 }
 
+if ((input$radiustype)=="FR") {
+
+  tempsdf<-SpatialPointsDataFrame(temp[,1:2],temp)
+  tempsdf@data$treeID<-1:nrow(temp)
+  #print(head(tempsdf))
+  
+  crowns=silva2016(chmR0, tempsdf, max_cr_factor = input$maxcrown, exclusion = input$exclusion,
+                         ID = "treeID")()
+  contour = rasterToPolygons(crowns, dissolve = TRUE)
+  colnames(contour@data)<-"treeID"
+  
+  contour@data$CA<-raster::area(contour)
+  
+  polyCrown<-merge(contour,tempsdf@data, by="treeID")
+  #print(polyCrown@data)
+  pspdf<-merge(tempsdf,contour@data, by="treeID")
+  
+  temp<-data.frame(cbind(coordinates(pspdf),pspdf@data$z,
+                         sqrt(as.numeric(paste0(pspdf@data$CA/pi)))*2,pspdf@data$CA))
+  #temp[i,4]<-NA
+} 
+
+#kkk<-pspdf@data[,3]
+#head(temp)
+#print(temp)
+temp<-data.frame(temp)
+colnames(temp)<-c("x","y","Height","CW","CA")
 
 
 output$hist <- renderPlot({
@@ -330,9 +409,13 @@ output$hist <- renderPlot({
   })
   
   dens<-density(chmASCII.df[,1],adjust = 1.3, kernel = "gaussian")
-  plot(dens$y,dens$x, col="black",xlab="Density",ylab="Height (m)",type="line",lwd="1",ylim=c(0,max(chmASCII.df[,1]*1.3))) 
-  polygon(dens$y,dens$x, col="forestgreen", border="black")
-  boxplot(chmASCII.df[,1],ylim=c(0,max(chmASCII.df[,1])*1.3),horizontal=F, col="forestgreen",ylab="Height (m)")}
+  par(mfrow=c(1,3), mar=c(5,5,2,2))
+  plot(dens$y,dens$x, cex.lab=2,col="black",xlab="Density",ylab="Height (m)",type="line",lwd="1",ylim=c(0,max(chmASCII.df[,1]*1.3))) 
+  polygon(dens$y,dens$x, col=input$profColor, border="black")
+  boxplot(chmASCII.df[,1], cex.lab=2, ylim=c(0,max(chmASCII.df[,1])*1.3),horizontal=F, col=input$profColor,ylab="Height (m)")
+  ar<-pi*(temp[,4]/2)^2
+  boxplot(ar,ylim=c(0,max(ar)*1.3),cex.lab=2, horizontal=F, col=input$profColor,ylab="Crown Area (m2)")
+   }
   },height = 360,width=850)
 
 isolate({
@@ -347,11 +430,13 @@ isolate({
       chmASCII.df<-data.frame(chmASCII)
       isolate({
         chmASCII.df<-subset(chmASCII.df,chmASCII.df[,1]>=Htreshoud)})
-      
       dens<-density(chmASCII.df[,1],adjust = 1.3, kernel = "gaussian")
-      plot(dens$y,dens$x, col="black",xlab="Density",ylab="Height (m)",type="line",lwd="1",ylim=c(0,max(chmASCII.df[,1]*1.3))) 
-      polygon(dens$y,dens$x, col="forestgreen", border="black")
-      boxplot(chmASCII.df[,1],ylim=c(0,max(chmASCII.df[,1]*1.3)),horizontal=F, col="forestgreen",ylab="Height (m)")
+      par(mfrow=c(1,3), mar=c(5,5,2,2))
+      plot(dens$y,dens$x, cex.lab=2,col="black",xlab="Density",ylab="Height (m)",type="line",lwd="1",ylim=c(0,max(chmASCII.df[,1]*1.3))) 
+      polygon(dens$y,dens$x, col=input$profColor, border="black")
+      boxplot(chmASCII.df[,1], cex.lab=2, ylim=c(0,max(chmASCII.df[,1])*1.3),horizontal=F, col=input$profColor,ylab="Height (m)")
+      ar<-pi*(temp[,4]/2)^2
+      boxplot(ar,ylim=c(0,max(ar)*1.3),cex.lab=2, horizontal=F, col=input$profColor,ylab="Crown Area (m2)")
       dev.off()},
     contentType = 'image/png'
   )})
@@ -434,6 +519,7 @@ isolate({
     contentType = 'image/png'
   )})
 
+# plot CHM 2D or lorenzCurve
 isolate({
 output$CHMplot2D <- renderPlot({
   
@@ -501,16 +587,25 @@ output$CHMplot2D <- renderPlot({
   tree.xy <- data.frame(na.omit(tree.xy))
   
   plot(chmR0,col=col.rev,axes = T, xlab="UTM Easting",ylab="UTM Northing") 
-  points(tree.xy, pch=16, cex = 1.5, col="forestgreen",  type = "p") 
+  points(tree.xy, pch=16, cex = 1.5, col=input$TopColor,  type = "p") 
+  
+  
+  if ((input$radiustype)=="FR") {
+  
+    plot(contour, add=T, border=input$CrownColor, lwd=2)
+    
+    } else {
   for ( i in 1:length(temp[,1])) {
     col<-c(1:length(temp[,1]))
-    draw.circle(x=temp[i,1],y=temp[i,2],(temp[i,4])/2,border=col[i],lty=1,lwd=1)
-  }}
+    draw.circle(x=temp[i,1],y=temp[i,2],(temp[i,4])/2,border=input$CrownColor,lty=1,lwd=1)
+  }}}
   },height = 570,width=640) 
 
 
 })
 
+
+# download CHM 2d
 isolate({
 output$downloadCHMprint <- downloadHandler(
   filename <- function() {
@@ -542,20 +637,45 @@ output$downloadCHMprint <- downloadHandler(
     tree.xy <- data.frame(na.omit(tree.xy))
     
     plot(chmR0,col=col.rev,axes = T, xlab="UTM Easting",ylab="UTM Northing") 
-    points(tree.xy, pch=16, cex = 1.5, col="forestgreen",  type = "p") 
+    points(tree.xy, pch=16, cex = 1.5, col=input$TopColor,  type = "p") 
     
-    for ( i in 1:length(temp[,1])) {
-      col<-c(1:length(temp[,1]))
-      draw.circle(x=temp[i,1],y=temp[i,2],(temp[i,4])/2,border=col[i],lty=1,lwd=1)
-    }
-    dev.off()},
+    
+    if ((input$radiustype)=="FR") {
+      
+      plot(contour, add=T, border=input$CrownColor, lwd=2)
+      
+    } else {
+      for ( i in 1:length(temp[,1])) {
+        col<-c(1:length(temp[,1]))
+        draw.circle(x=temp[i,1],y=temp[i,2],(temp[i,4])/2,border=input$CrownColor,lty=1,lwd=1)
+      }}
+  dev.off()},
   contentType = 'image/png'
 )})
 
-AreaPolyTree<-pi*((temp[,4]/2)^2)
-newDataTree<-cbind(temp,AreaPolyTree)
-colnames(newDataTree)<-c("x","y","Height","CW", "CA")
 
+  #AreaPolyTree<-pi*((temp[,4]/2)^2)
+  newDataTree<-temp
+  #colnames(newDataTree)<-c("x","y","Height","CW", "CA")
+
+
+if ((input$radiustype)=="FR") {
+  output$downloadShpR <- renderUI({div(style="margin-left:0px;margin-top: -5px;width:300px",downloadButton('downloadShp', 'Tree Crown (.shp)')) })
+  createShp <- reactive({
+    myXY<-temp
+    if (is.null(myXY)){
+      return(NULL)      
+    } else {
+      
+      SHP<-polyCrown
+      SHP@data$CW<-sqrt(SHP@data$CA/pi)*2
+      #SHP@data$CA<-pi*(SHP@data$CW/2)^2
+      #print(SHP@data)
+      return(SHP)
+    }
+  })  
+  
+} else {
 output$downloadShpR <- renderUI({div(style="margin-left:0px;margin-top: -5px;width:300px",downloadButton('downloadShp', 'Tree Crown (.shp)')) })
 createShp <- reactive({
   myXY<-temp
@@ -593,13 +713,13 @@ createShp <- reactive({
         row.names=sapply(slot(polybuffs, 'polygons'), function(x) slot(x, 'ID'))))
     
     proj4string(SHP) <- projection_chmASCII
-    SHP$Height<-newDataTree[,3]
-    SHP$CW<-newDataTree[,4]
-    SHP$CA<-newDataTree[,5]
+    SHP$Height<-newDataTree$Height
+    SHP$CW<-newDataTree$CW
+    SHP$CA<-newDataTree$CA
     return(SHP)
   }
 })
-
+}
 
 output$downloadShp <- downloadHandler(
   filename = 'TreeCrownExport.zip',
@@ -608,7 +728,6 @@ output$downloadShp <- downloadHandler(
       file.remove(Sys.glob("TreeCrownExport.*"))
     }
 
-    
     setwd(tempdir())
     writeOGR(createShp(), dsn="TreeCrownExport.shp", layer="TreeCrownExport", driver="ESRI Shapefile")
     zip(zipfile='TreeCrownExport.zip', files=Sys.glob("TreeCrownExport.*"))
@@ -634,7 +753,7 @@ createShpXY <- reactive({
   } else {
    
 lots <- SpatialPointsDataFrame(coords= cbind(newDataTree[,1],newDataTree[,2],
-    newDataTree[,3], newDataTree[,4],newDataTree[,5]), data = newDataTree)
+    newDataTree$Height, newDataTree$CW,newDataTree$CA), data = newDataTree)
     proj4string(lots) <- projection_chmASCII
     return(lots)
   }
@@ -684,7 +803,7 @@ isolate({
 	  #plot3D(chmR0,col=myPal)#,lit=TRUE,specular="black")
 	  CHM3Dvis(chm=chmR0,colR=myPal,xlab="UTM Easting",ylab="UTM Northing",zlab="Height (m)")
       axes3d(c("x-", "y-"), col="black")
-      title3d(xlab = "UTM.Easting", ylab = "UTM.Northing")#, col="green")
+      title3d(xlab = "UTM Easting", ylab = "UTM Northing")#, col="green")
       #planes3d(a=0,b=0,c=-1,d=0.0001,color= "gray",alpha=0.4)
       aspect3d(1,1,0.5)
 	  widget <- rglwidget()
@@ -693,18 +812,33 @@ isolate({
 	xl<-max(tree[,1])-tree[,1]
 	yl<-max(tree[,2])-tree[,2]
 	
-	CBHp<-sample(0.4,0.7,length(xl))
-	CL<-1-CBHp
+	CBHp<-tree[,3]*0.6
+	CL<-tree[,3] - CBHp 
+	CW<-(temp[,4])/2
+	
+	if ((input$plotShape)=="plotEllipsoid") {
+	  
+	  posit<-t(cbind(xl,yl,CBHp))
+	  sizesel<-t(cbind(CW,CW,CL))
+	  anglesl<-matrix(c(0,1.570796,0), 3,length(yl))
+	  rownames(anglesl)<-c("phi","theta","")
+	  rgl.ellipsoids(positions=posit,sizes=sizesel,angles=anglesl, col="forestgreen")
+
+	  for(i in 1:nrow(tree)) {
+	    vec=rbind(c(xl[i],yl[i], 0 ), c(xl[i], yl[i],tree[i,3]))
+	    segments3d(vec, col=" brown", lwd=2 )}
+	    
+	} else {
       for(i in 1:nrow(tree)) {
-        cone3d(base=c(tree[i,1],tree[i,2],tree[i,3]*0.6), 
-          rad=(temp[i,4])/2,tip=c(tree[i,1],tree[i,2],tree[i,3]), 
-          col="forestgreen",front="lines")        
-		vec=rbind(c( tree[i,1],tree[i,2], 0 ), c(tree[i,1], tree[i,2],tree[i,3]))
+        cone3d(base=c(xl[i],yl[i],tree[i,3]*0.6), 
+          rad=(temp[i,4])/2,tip=c(xl[i],yl[i],tree[i,3]), 
+          col="forestgreen")        
+		vec=rbind(c( xl[i],yl[i], 0 ), c(xl[i], yl[i],tree[i,3]))
         segments3d( vec, col=" brown", lwd=2 ) 
       }
-       
+	}   
       axes3d(c("x-", "y-"), col="black")
-      title3d(xlab = "UTM.Easting", ylab = "UTM.Northing")#, col="forestgreen")
+      title3d(xlab = "UTM Easting", ylab = "UTM Northing")#, col="forestgreen")
       planes3d(a=0,b=0,c=-1,d=0.0001,color="gray",alpha=0.4)
       aspect3d(1,1,0.3)
 	widget <- rglwidget(scene3d())
@@ -767,21 +901,33 @@ isolate ({
     
   ) })
 
-print(tree)
-print(temp)
+#print(tree)
+#print(temp)
 isolate ({
-  Hexp<-as.numeric(temp[,3])
+  
+  Hexp<-as.numeric(paste0(temp[,3]))
   NameExp<-c("Number of trees","Hmax","Hmean","Hmin","Hmedian","Hvar","Hsd","Hcv","Hkurtosis","Hskewness")
-  MetricsExp<-c(length(Hexp), round(max(Hexp),digits=2),round(mean(Hexp),digits=2),
-                round(min(Hexp),digits=2),round(median(Hexp),digits=2),round(var(Hexp),digits=2),
-                round(sd(Hexp),digits=2),round(cv(Hexp),digits=2),round(kurtosis(Hexp),digits=2),
+  MetricsExp<-c(length(Hexp), 
+                round(max(Hexp),digits=2),
+                round(mean(Hexp),digits=2),
+                round(min(Hexp),digits=2),
+                round(median(Hexp),digits=2),
+                round(var(Hexp),digits=2),
+                round(sd(Hexp),digits=2),
+                round(cv(Hexp),digits=2),
+                round(kurtosis(Hexp),digits=2),
                 round(skewness(Hexp),digits=2))
   
-  print(NameExp)
-  print(MetricsExp)
-  LiDARsummary<-as.data.frame(cbind(NameExp,MetricsExp))
+  #print(NameExp)
+  #print(MetricsExp)
+  LiDARsummary<-data.frame(cbind(NameExp,MetricsExp))
   colnames(LiDARsummary)<-c("Parameters", "Value")
+  #print(pspdf@data[,3])
+  #print(temp[,3])
+  #print(Hexp)
+  #head(Hexp)
   LiDARsummary  
+
 }) 
 
 
