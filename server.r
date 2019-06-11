@@ -461,7 +461,7 @@ isolate({
       CE<-clarkevans.test(P)
       par(mfrow = c(1, 3), mar = c(8, 5, 4, 3))
       plot(K, lwd=2,main="a) K",xlab = "r (m)",cex.lab=1.5)
-      legend("bottomright", cex=1.2,legend=c("Clark Evans test", paste0("R=",round(CE[1][[1]],4)),paste0("p-value=",round(CE[2][[1]],4))), bty="n")
+      legend("bottomright", cex=1.2,legend=c("Clark Evans index", paste0("R=",round(CE[1][[1]],4)) ), bty="n")
       plot(L, lwd=2,main="b) L",xlab = "r (m)",cex.lab=1.5)
       plot(L, . -r ~ r, ylab=expression(hat("L")), xlab = "r (m)", main="c) L", lwd=2,cex.lab=1.5)
             dev.off()},
