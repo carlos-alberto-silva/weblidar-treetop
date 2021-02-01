@@ -1,0 +1,91 @@
+.zoom {
+  zoom: 100%;
+}
+
+input[type="radio"]{
+   float: left;
+   width: auto;
+   margin-left: 3em;
+   }
+
+select {
+  max-width: 120px;
+}
+
+input[type="number"] {
+  max-width: 70px;
+}
+
+
+.jslider {
+  max-width: 250px;
+}
+
+body {
+    background-color: #444;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+.well {
+  padding: 12px;
+  margin-bottom: 5px;
+  max-width: 300px;
+}
+
+.span4 {
+  max-width: 280px;
+}
+
+.span8 {
+  max-width: 500px;
+}
+
+.nav
+{
+   width: 60%;
+   border: 2px solid #999;
+   border-radius: 15px;
+   margin-center: 0;
+   text-align:center;
+   margin-top: 30px;
+   margin: 0 auto;
+   background-color: #808080;
+   #overflow: hidden;
+}
+
+.rglPlayer {
+  width: auto;
+  height: auto;
+}
+
+.rglPlayer .rgl-button {
+  width: auto;
+  display: inline-block;
+  font-size: 75%;
+}
+
+.rglPlayer .rgl-slider {
+  display: inline-block;
+  width: 30%;
+}
+
+.rglPlayer .rgl-label {
+  display: inline;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+.shiny-progress .progress-text {
+
+  top: 50% !important;
+  left: 50% !important;
+  margin-top: -100px !important;
+  margin-left: -250px !important;
+
+
+  color: #020202;
+  font-size: 18px;
+  background-color: #020202;
+  text-align: center;
+
+
+}
