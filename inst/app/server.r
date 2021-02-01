@@ -27,8 +27,6 @@ require(rglwidget)
 require(lidR)
 require(rmarkdown)
 require(pryr)
-#library(ShinyDash)
-#require(shinyGridster)
 ################################################################################
 ################################################################################
 
