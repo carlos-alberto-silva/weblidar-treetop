@@ -17,21 +17,7 @@
 ################################################################################
 # Libraries
 options(rgl.useNULL=TRUE)
-#library(shiny)
-#library(shinyRGL)
-#library(ShinyDash)
-#library(shinyIncubator)
 
-#require(devtools)
-#require(shiny)
-#install_github("wch/shiny-gridster")
-#library(shinyGridster)
-
-#require(devtools)
-#require(shiny)
-#install_github("trestletech/ShinyDash")
-#library(ShinyDash)
-#require(shinyGridster)
 ################################################################################
 
 appDir <- file.path(path.package("treetop", quiet=TRUE),"app")

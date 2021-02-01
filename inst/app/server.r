@@ -11,24 +11,9 @@
 ################################################################################
 # Libraries
 options(rgl.useNULL=TRUE)
-require(RColorBrewer)
-require(spatstat)
-require(raster)
-require(sp)
-require(geometry)
-require(moments)
-require(maptools)
-require(plotrix)
-require(rgdal)
-require(rasterVis)
-require(rgl)
-require(shiny)
-require(rglwidget)
-require(lidR)
-require(rmarkdown)
-require(pryr)
-#library(ShinyDash)
-#require(shinyGridster)
+require(pacman)
+p_load(RColorBrewer,spatstat,raster,sp,geometry,moments,maptools,plotrix,rgdal,rasterVis,rgl,shiny,rglwidget,lidR,rmarkdown,pryr)
+
 ################################################################################
 ################################################################################
 
