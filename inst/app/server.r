@@ -11,9 +11,9 @@
 ################################################################################
 # Libraries
 options(rgl.useNULL=TRUE)
-#require(pacman)
-#p_load(RColorBrewer,spatstat,raster,sp,geometry,maptools,#moments,plotrix,rasterVis,rmarkdown
-#       rgdal,rgl,shiny,rglwidget,lidR,pryr)
+require(pacman)
+p_load(RColorBrewer,spatstat,raster,sp,geometry,maptools,#moments,plotrix,rasterVis,rmarkdown
+       rgdal,rgl,shiny,rglwidget,lidR,pryr)
 
 ################################################################################
 

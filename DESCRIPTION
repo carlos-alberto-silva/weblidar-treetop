@@ -29,17 +29,7 @@ Depends:
     R (>= 3.5.0)
 Imports:
   shiny,
-  RColorBrewer,
-  spatstat,
-  raster,
-  sp,
-  geometry,
-  maptools,
-  rgdal,
-  rgl,
-  rglwidget,
-  lidR,
-  pryr
+  pacman
 RoxygenNote: 7.1.1
 URL: https://github.com/carlos-alberto-silva/weblidar-treetop
 Copyright: inst/COPYRIGHTS
