@@ -12,7 +12,8 @@
 # Libraries
 options(rgl.useNULL=TRUE)
 #require(pacman)
-#p_load(RColorBrewer,spatstat,raster,sp,geometry,moments,maptools,plotrix,rgdal,rasterVis,rgl,shiny,rglwidget,lidR,rmarkdown,pryr)
+#p_load(RColorBrewer,spatstat,raster,sp,geometry,maptools,#moments,plotrix,rasterVis,rmarkdown
+#       rgdal,rgl,shiny,rglwidget,lidR,pryr)
 
 ################################################################################
 
@@ -31,6 +32,37 @@ shinyServer(function(input, output, session) {
                   smooth = TRUE, texture = NULL,front = "fill",back ="fill",fog = F, box=F,axes = FALSE)}
 
 
+
+  # kurtosis and skewness from moments package
+  kurtosis<-function (x, na.rm = FALSE)
+  {
+    if (is.matrix(x))
+      apply(x, 2, kurtosis, na.rm = na.rm)
+    else if (is.vector(x)) {
+      if (na.rm)
+        x <- x[!is.na(x)]
+      n <- length(x)
+      n * sum((x - mean(x))^4)/(sum((x - mean(x))^2)^2)
+    }
+    else if (is.data.frame(x))
+      sapply(x, kurtosis, na.rm = na.rm)
+    else kurtosis(as.vector(x), na.rm = na.rm)
+  }
+
+  skewness<-function (x, na.rm = FALSE)
+  {
+    if (is.matrix(x))
+      apply(x, 2, skewness, na.rm = na.rm)
+    else if (is.vector(x)) {
+      if (na.rm)
+        x <- x[!is.na(x)]
+      n <- length(x)
+      (sum((x - mean(x))^3)/n)/(sum((x - mean(x))^2)/n)^(3/2)
+    }
+    else if (is.data.frame(x))
+      sapply(x, skewness, na.rm = na.rm)
+    else skewness(as.vector(x), na.rm = na.rm)
+  }
    TreesModel<- function(crownshape=c("cone","ellipsoid","halfellipsoid","paraboloid","cylinder"),
                         nz=15, nalpha=15, CL=5, CW=5, HCB=10, x0=0, y0=0, z0=0, dbh = 0.3, crowncolor = "forestgreen",
                         stemcolor = "chocolate4", shape=1
@@ -161,6 +193,7 @@ output$summary <- renderTable({
   observeEvent(input$refresh, {
     if (input$refresh==1){
       session$reload()
+      rm(list=ls())
   }
     })
 
@@ -171,14 +204,14 @@ output$summary <- renderTable({
   #    if (input$action_button == 1) {
    #     session$reload()}
 
-      if(exists("chmR")){rm(chmR)}
-      if(exists("chmR0")){rm(chmR0)}
-      if(exists("decTREE")){rm(decTREE)}
-      if(exists("r")){rm(r)}
-      if(exists("treeMer")){rm(treeMer)}
-      if(exists("exst")){rm(exst)}
-      if(exists("tree")){rm(tree)}
-      if(exists("temp")){rm(temp)}
+      #if(exists("chmR")){rm(chmR)}
+      #if(exists("chmR0")){rm(chmR0)}
+      #if(exists("decTREE")){rm(decTREE)}
+      #if(exists("r")){rm(r)}
+      #if(exists("treeMer")){rm(treeMer)}
+      #if(exists("exst")){rm(exst)}
+      #if(exists("tree")){rm(tree)}
+      #if(exists("temp")){rm(temp)}
 
   output$pageviews <-  renderText({
     if (!file.exists("pageviews.Rdata")) pageviews <- 0 else load(file="pageviews.Rdata")
@@ -397,7 +430,7 @@ output$summary <- renderTable({
   colnames(treeMer)<-c("x","y","z")
    tree<-subset(treeMer, treeMer$z >=Htreshoud)
   colnames(tree)<-c("x","y","z")
-  if(exists("decTREE")){rm(decTREE)}
+  #if(exists("decTREE")){rm(decTREE)}
  })
 
 
