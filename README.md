@@ -39,7 +39,7 @@ library(treetop)
 
 ## Launch the treetop application
 ```r
-treetop::lauchApp()
+treetop::launchApp()
 ```
 
 # References
