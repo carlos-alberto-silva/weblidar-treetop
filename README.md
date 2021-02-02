@@ -1,11 +1,11 @@
-![](https://github.com/carlos-alberto-silva/weblidar-treetop/blob/master/readme/wiki_page.png)<br/>
+![](https://github.com/carlos-alberto-silva/weblidar-treetop /blob/master/readme/wiki_page.png)<br/>
 
 ![Github](https://img.shields.io/badge/Github-0.0.1-green.svg)
 ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) 
 
 **Treetop: A Shiny-based Application for Extracting Forest Information from LiDAR data for Ecologists and Conservationists.**
 
-Authors: Carlos Alberto Silva, Andrew T. Hudak, Lee A. Vierling,  Ruben Valbuena, Adrian Cardil, Midhun Mohan, Danilo Roberti Alves de Almeida, Eben N. Broadbent, Angelica M. Almeyda Zambrano, Ben Wilkinson, Ajay Sharma, Jason B. Drake, Paul B. Medley, Jason G. Vogel, Gabriel Atticciati Prata, Carine Klauberg.   
+Authors: Carlos Alberto Silva, Andrew T. Hudak, Lee A. Vierling,  Ruben Valbuena, Adrian Cardil, Midhun Mohan, Danilo Roberti Alves de Almeida, Eben N. Broadbent, Angelica M. Almeyda Zambrano, Ben Wilkinson, Ajay Sharma, Jason B. Drake, Paul B. Medley, Jason G. Vogel, Gabriel Atticciati Prata,Jeff Atkins, Carine Klauberg.   
 
 The treetop application provides options for i) detecting individual trees from lidar-derived canopy height models (CHM), ii) extract crown-level attributes (e.g. location, crown height and area), iii) assessing forest uniformidy and individual tree spatial distribution, iv) exporting extracted crown-level products, v) visualizing CHM and crown-level products in 2D and 3D.
 
