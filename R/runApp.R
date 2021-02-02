@@ -2,7 +2,7 @@
 #
 #'@description This function launch the treetop application
 #'
-#'@usage runApp(...)
+#'@usage launchApp(...)
 #'
 #'@param ... additional parameters from the \code{\link[shiny:runApp]{runApp}} function.
 #'
@@ -10,11 +10,11 @@
 #'\dontrun{
 #'
 #'# Launch treetop application
-#'treetop::runApp(launch.browser = TRUE)
+#'treetop::launchApp(launch.browser = TRUE)
 #'
 #'}
 #'@export
-runApp<-function(...){
+launchApp<-function(...){
   appDir <- file.path(path.package("treetop", quiet=TRUE),"app")
   shiny::runApp(appDir, ...)
 }
