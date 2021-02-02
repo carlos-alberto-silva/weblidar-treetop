@@ -14,10 +14,6 @@ options(rgl.useNULL=TRUE)
 # warning messages off
 options(warn=-1)
 
-# libraries
-require(pacman)
-p_load(RColorBrewer,spatstat,raster,sp,geometry,maptools,#moments,plotrix,rasterVis,rmarkdown
-       rgdal,rgl,shiny,lidR,pryr)
 
 ################################################################################
 
@@ -190,6 +186,7 @@ GiniCoeff <- function (x, finite.sample = TRUE, na.rm = TRUE){
   return(GC)
 }
 
+
 ####################################
 
 output$summary <- renderTable({
@@ -267,10 +264,22 @@ output$summary <- renderTable({
  #}
 
  #plotlength<-86.60254
-
+ #packages<-c("RColorBrewer","spatstat","raster",
+ #             "sp","geometry","maptools",#moments,plotrix,rasterVis,rmarkdown
+ #            "rgdal","rgl","shiny","lidR","pryr")
+ #
+ #pac_missing<-NULL
+ #for ( i in packages){
+ #   if (!require(i, character.only = TRUE)) {
+ #     withProgress(message = paste0("Note: the dependency ",i," is missing. It will be installed automatically."), value = 0.1,detail = "This might take a few minutes!", {
+ #     install.packages(x, dependencies = TRUE)
+ #       library(x, character.only = TRUE)
+ #      })
+ #   }
+ # }
  area_ha <- (ncell(chmR)*reschmR^2)/10000
 
- if (area_ha > 3){
+ if (area_ha > 30000){
      withProgress(message = "Note: the study area is larger then 2ha. Please check the file extent or upload a smaller CHM file.", value = 0.1,detail = "The app will be restarted in a few seconds!", {
        Sys.sleep(10)
      })
