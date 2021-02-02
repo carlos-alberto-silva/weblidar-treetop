@@ -29,7 +29,7 @@ shinyServer(function(input, output, session) {
     surf.3d <- t(convhulln(input,options = "QJ"))
     rgl.triangles(input[surf.3d,1],input[surf.3d,2],input[surf.3d,3],col=col,alpha = 1,
                   lit = TRUE,ambient = "black",specular = "white",emission = "black",shininess = 50.0,
-                  smooth = TRUE, texture = NULL,front = "fill",back ="fill",fog = F, box=F,axes = FALSE)}
+                  smooth = TRUE, texture = NULL,front = "fill",back ="fill", box=F,axes = FALSE)}
 
 
 
@@ -851,25 +851,28 @@ output$summary <- renderTable({
            }
 
            while (rgl.cur() > 0) { while (rgl.cur() > 0) { try(rgl.close()) } }
-           withProgress(message = paste('Rendering',nrow(treelist_treetop),"trees in 3D.",detail2), value = 0.1,detail = 'This may take a few seconds......', {
+           withProgress(message = paste('Rendering',nrow(treelist_treetopsdf@data),"trees in 3D.",detail2), value = 0.1,detail = 'This may take a few seconds......', {
              Sys.sleep(10)
 
            for(i in 1:n) {
-             bg3d(col = "white")
+
+             rgl::bg3d(col = "white")
+             vec=rbind(c(xl[i],yl[i], 0), c(xl[i], yl[i],treelist_treetopsdf@data$Height[i]))
+             rgl::segments3d(vec, col=" brown",size=2)#, lwd=2)
+
              ptree<-TreesModel(crownshape = input$plotShape, nz=15, nalpha=15, CL = CL[i], CR =treelist_treetopsdf@data$CR[i],
                                HCB = CBHp[i], x0 =xl[i], y0 = yl[i], crowncolor = "forestgreen", shape=shape)
 
+             #browser()
              rm(ptree)
              incProgress(0.1, detail = paste("Ploting tree n:", i))
-             vec=rbind(c(xl[i],yl[i], 0 ), c(xl[i], yl[i],tree[i,3]))
-             segments3d(vec, col=" brown", lwd=2 )
 
            }
-           axes3d(c("x-", "y-"), col="black")
-           title3d(xlab = "UTM Easting", ylab = "UTM Northing")#, col="forestgreen")
-           planes3d(a=0,b=0,c=-1,d=0.0001,color="gray",alpha=0.4)
-           aspect3d(1,1,0.3)
-           rglwidget()
+           rgl::axes3d(c("x-", "y-"), col="black")
+           rgl::title3d(xlab = "UTM Easting", ylab = "UTM Northing")#, col="forestgreen")
+           rgl::planes3d(a=0,b=0,c=-1,d=0.0001,color="gray",alpha=0.4)
+           rgl::aspect3d(1,1,0.3)
+           rgl::rglwidget()
          })
        }
 
