@@ -4,21 +4,21 @@ Title: TreeTop: A Shiny-based application for Extracting Forest Information from
 Version: 0.01
 Authors@R: c(
     person("Carlos Alberto", "Silva", email = "carlos_engflorestal@outlook.com", role = c("aut", "cre", "cph")),
-    person("Andrew", "Hudak", email = "caiohamamura@gmail.com", role = c("aut", "cph")),
-    person("Lee", "Vierling", email = "r.valbuena@bangor.ac.uk", role = c("aut","ctb")),
+    person("Andrew", "Hudak", email = "andrew.hudak@usda.gov", role = c("aut", "cph")),
+    person("Lee", "Vierling", email = "leev@uidaho.edu", role = c("aut","ctb")),
     person("Ruben", "Valbuena", email = "r.valbuena@bangor.ac.uk", role = c("aut","ctb")),
     person("Adrian", "Cardil", email = "adriancardil@gmail.com", role = c("aut","ctb")),
-    person("Midhun", "Mohan", email = "adriancardil@gmail.com", role = c("aut","ctb")),
+    person("Midhun", "Mohan", email = "mid_mohan@berkeley.edu", role = c("aut","ctb")),
     person("Danilo Roberti Alves de", "Almeida", email = "daniloflorestas@gmail.com", role = c("aut","ctb")),
     person("Eben North", "Broadbent", email = "eben@ufl.edu", role = c("aut","ctb")),
-    person("Angelica", "Zambrano", email = "eben@ufl.edu", role = c("aut","ctb")),
-    person("Ben", "Wilkinson", email = "celso.junior@inpe.br", role = c("aut","ctb")),
-    person("Ajay", "Sharma", email = "celso.junior@inpe.br", role = c("aut","ctb")),
-    person("Jason", "Drake", email = "celso.junior@inpe.br", role = c("aut","ctb")),
-    person("Paul", "Medley", email = "celso.junior@inpe.br", role = c("aut","ctb")),
-    person("Jason", "Vogel", email = "celso.junior@inpe.br", role = c("aut","ctb")),
-    person("Gabriel", "Prata", email = "celso.junior@inpe.br", role = c("aut","ctb")),
-    person("Jeff", "Atkins", email = "celso.junior@inpe.br", role = c("aut","ctb")),
+    person("Angelica", "Zambrano", email = "aalmeyda@ufl.edu", role = c("aut","ctb")),
+    person("Ben", "Wilkinson", email = "benew@ufl.edu", role = c("aut","ctb")),
+    person("Ajay", "Sharma", email = "ajay.sharma@ufl.edu", role = c("aut","ctb")),
+    person("Jason", "Drake", email = "jason.drake@famu.edu", role = c("aut","ctb")),
+    person("Paul", "Medley", email = "paul.medley@famu.edu", role = c("aut","ctb")),
+    person("Jason", "Vogel", email = "jvogel@ufl.edu", role = c("aut","ctb")),
+    person("Gabriel", "Prata", email = "gprata@ufl.edu", role = c("aut","ctb")),
+    person("Jeff", "Atkins", email = "jwatkins6@vcu.edu", role = c("aut","ctb")),
     person("Carine", "Klauberg", email = "carine_klauberg@hotmail.com", role = c("aut","ctb")))
 Maintainer: Carlos Alberto Silva <carlos_engflorestal@outlook.com>
 Description: Shiny-based application for processing and visualizing lidar data.
