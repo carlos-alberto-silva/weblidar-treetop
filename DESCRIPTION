@@ -1,11 +1,49 @@
 Package: treetop
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Title: TreeTop: A Shiny-based application for Extracting Forest Information from LiDAR data for Ecologists and Conservationists
+Version: 0.01
+Authors@R: c(
+    person("Carlos Alberto", "Silva", email = "carlos_engflorestal@outlook.com", role = c("aut", "cre", "cph")),
+    person("Andrew", "Hudak", email = "caiohamamura@gmail.com", role = c("aut", "cph")),
+    person("Lee", "Vierling", email = "r.valbuena@bangor.ac.uk", role = c("aut","ctb")),
+    person("Ruben", "Valbuena", email = "r.valbuena@bangor.ac.uk", role = c("aut","ctb")),
+    person("Adrian", "Cardil", email = "adriancardil@gmail.com", role = c("aut","ctb")),
+    person("Midhun", "Mohan", email = "adriancardil@gmail.com", role = c("aut","ctb")),
+    person("Danilo Roberti Alves de", "Almeida", email = "daniloflorestas@gmail.com", role = c("aut","ctb")),
+    person("Eben North", "Broadbent", email = "eben@ufl.edu", role = c("aut","ctb")),
+    person("Angelica", "Zambrano", email = "eben@ufl.edu", role = c("aut","ctb")),
+    person("Ben", "Wilkinson", email = "celso.junior@inpe.br", role = c("aut","ctb")),
+    person("Ajay", "Sharma", email = "celso.junior@inpe.br", role = c("aut","ctb")),
+    person("Jason", "Drake", email = "celso.junior@inpe.br", role = c("aut","ctb")),
+    person("Paul", "Medley", email = "celso.junior@inpe.br", role = c("aut","ctb")),
+    person("Jason", "Vogel", email = "celso.junior@inpe.br", role = c("aut","ctb")),
+    person("Gabriel", "Prata", email = "celso.junior@inpe.br", role = c("aut","ctb")),
+    person("Jeff", "Atkins", email = "celso.junior@inpe.br", role = c("aut","ctb")),
+    person("Carine", "Klauberg", email = "carine_klauberg@hotmail.com", role = c("aut","ctb")))
+Maintainer: Carlos Alberto Silva <carlos_engflorestal@outlook.com>
+Description: Shiny-based application for processing and visualizing lidar data.
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
+Depends:
+    R (>= 3.5.0)
+Imports:
+  RColorBrewer,
+  spatstat,
+  raster,
+  sp,
+  geometry,
+  moments,
+  maptools,
+  plotrix,
+  rgdal,
+  rasterVis,
+  rgl,
+  shiny,
+  rglwidget,
+  lidR,
+  rmarkdown,
+  pryr
+RoxygenNote: 7.1.1
+URL: https://github.com/carlos-alberto-silva/weblidar-treetop
+Copyright: inst/COPYRIGHTS
