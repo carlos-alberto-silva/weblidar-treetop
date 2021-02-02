@@ -5,7 +5,7 @@
 
 **Treetop: A Shiny-based Application for Extracting Forest Information from LiDAR data for Ecologists and Conservationists.**
 
-Authors: Carlos Alberto Silva, Andrew T. Hudak, Lee A. Vierling,  Ruben Valbuena, Adrian Cardil, Midhun Mohan, Danilo Roberti Alves de Almeida, Eben N. Broadbent, Angelica M. Almeyda Zambrano, Ben Wilkinson, Ajay Sharma, Jason B. Drake, Paul B. Medley, Jason G. Vogel, Gabriel Atticciati Prata,Jeff Atkins, Carine Klauberg.   
+Authors: Carlos Alberto Silva, Andrew T. Hudak, Lee A. Vierling,  Ruben Valbuena, Adrian Cardil, Midhun Mohan, Danilo Roberti Alves de Almeida, Eben N. Broadbent, Angelica M. Almeyda Zambrano, Ben Wilkinson, Ajay Sharma, Jason B. Drake, Paul B. Medley, Jason G. Vogel, Gabriel Atticciati Prata, Jeff Atkins, Carine Klauberg.   
 
 The treetop application provides options for i) detecting individual trees from lidar-derived canopy height models (CHM), ii) extract crown-level attributes (e.g. location, crown height and area), iii) assessing forest uniformidy and individual tree spatial distribution, iv) exporting extracted crown-level products, v) visualizing CHM and crown-level products in 2D and 3D.
 
@@ -41,6 +41,7 @@ library(treetop)
 ```r
 treetop::launchApp()
 ```
+<img src="https://github.com/carlos-alberto-silva/weblidar-treetop/blob/master/readme/treetop.png.gif">
 
 # References
 Silva, C. A., Hudak, A. T., Vierling, L. A., Loudermilk, E. L., O’Brien, J. J., Hiers, J. K., Khosravipour, A. (2016). Imputation of Individual Longleaf Pine (Pinus palustris Mill.) Tree Attributes from Field and LiDAR Data. Canadian Journal of Remote Sensing, 42(5), 554–573. doi:10.1080/07038992.2016.1196582
