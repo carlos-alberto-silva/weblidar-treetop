@@ -35,7 +35,7 @@ headerPanel2<-function (title, windowTitle = title)
 }
 
 
-shinyUI(navbarPage(collapsable = FALSE, inverse = T,
+shinyUI(navbarPage(collapsible = FALSE, inverse = T,
                    div(style="text-align:left;margin-left: +10px;margin-top: -20px; color:#444",
                        headerPanel2("","Web-LiDAR forest inventory TreeTop application"),
                        HTML("<a href='https://github.com/carlos-alberto-silva/weblidar-treetop'><img style='width: 80px;height: 80px;'
