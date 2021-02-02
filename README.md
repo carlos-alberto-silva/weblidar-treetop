@@ -1,6 +1,6 @@
-![](https://github.com/carlos-alberto-silva/rGEDI/blob/master/readme/fig1.png)<br/>
+![](https://github.com/carlos-alberto-silva/weblidar-treetop/blob/master/readme/wiki_page.png)<br/>
 
-![Github](https://img.shields.io/badge/Github-0.1.9-green.svg)
+![Github](https://img.shields.io/badge/Github-0.0.1-green.svg)
 ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) 
 
 **Treetop: A Shiny-based Application for Extracting Forest Information from LiDAR data for Ecologists and Conservationists.**
@@ -37,7 +37,7 @@ library(treetop)
 
 ```    
 
-## Find GEDI data within your study area (GEDI finder tool)
+## Launch the treetop application
 ```r
 treetop::lauchApp()
 ```
@@ -51,7 +51,7 @@ We gratefully acknowledge funding from the National Counsel of Technological and
 # Reporting Issues 
 Please report any issue regarding the Treetop app to Dr. Silva (carlos_engflorestal@outlook.com)
 
-# Citing rGEDI
+# Citing treetop application
 Silva et al. 2021. TreeTop: A Shiny-based Application for Extracting Forest Information from LiDAR data for Ecologists and Conservationists. Methods in Ecology and Evolution (In Review).
 
 # Disclaimer
