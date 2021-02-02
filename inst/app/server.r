@@ -11,9 +11,13 @@
 ################################################################################
 # Libraries
 options(rgl.useNULL=TRUE)
+# warning messages off
+options(warn=-1)
+
+# libraries
 require(pacman)
 p_load(RColorBrewer,spatstat,raster,sp,geometry,maptools,#moments,plotrix,rasterVis,rmarkdown
-       rgdal,rgl,shiny,rglwidget,lidR,pryr)
+       rgdal,rgl,shiny,lidR,pryr)
 
 ################################################################################
 
@@ -585,7 +589,7 @@ output$summary <- renderTable({
               c(0,cumsum(seq(100,2,length.out=1000)/sum(seq(100,2,length.out=1000)))),
               col="grey", lty=0)
       lines(c(.5,0),c(.5,1),lty=3,lwd=4,col="grey"); lines(c(.5,.4),c(.5,.6),lty=3,lwd=4,col="white")
-      lines(c(0,seq(0,1,length.out=length(size))),
+      lines(seq(0,1,length.out=length(size)+1),
             c(0,cumsum(sort(size,T)/sum(size))),
             lty=1,lwd=2)
       points(length(size[size>=mean(size)])/length(size),
@@ -622,7 +626,7 @@ output$summary <- renderTable({
     GC <- GiniCoeff(size)
 
     par(mar=c(6,4,2,2))
-    plot(c(0,1), c(0,1), type="l", col="grey", ylim=(0:1), xlim=c(0,1), lty=1, lwd=3,xlab="", ylab="", box=FALSE)
+    plot(c(0,1), c(0,1), type="l", col="grey", ylim=(0:1), xlim=c(0,1), lty=1, lwd=3,xlab="", ylab="")
     title(ylab=expression(paste("Accummulated proportion of tree heights (", italic(H), " ; m)" )),
           xlab=expression(paste("Accummulated proportion of number of trees ")),
           line=2.5,cex.lab=1.5)
@@ -630,7 +634,7 @@ output$summary <- renderTable({
             c(0,cumsum(seq(100,2,length.out=1000)/sum(seq(100,2,length.out=1000)))),
             col="grey", lty=0)
     lines(c(.5,0),c(.5,1),lty=3,lwd=4,col="grey"); lines(c(.5,.4),c(.5,.6),lty=3,lwd=4,col="white")
-    lines(c(0,seq(0,1,length.out=length(size))),
+    lines(seq(0,1,length.out=length(size)+1),
           c(0,cumsum(sort(size,T)/sum(size))),
           lty=1,lwd=2)
     points(length(size[size>=mean(size)])/length(size),
