@@ -15,15 +15,19 @@ The treetop application provides options for i) detecting individual trees from 
 ## Installation
 ```r
 
-## Dependecies for the treetop package
+## Dependencies for the treetop package
 
 # Git  
 Download and install git: https://git-scm.com/
 
-# R packages
+# Install the pacman R package
 install.packages("pacman")
 library(pacman)
 
+# Detach all R packages
+p_unload(pacman::p_loaded(), character.only = TRUE)
+
+# Install and load all dependencies
 p_load(devtools, shiny, RColorBrewer, spatstat, raster, sp,
        geometry, maptools, rgdal, rgl, lidR, pryr, update=TRUE)
 
