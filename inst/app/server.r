@@ -477,14 +477,14 @@ output$summary <- renderTable({
                                    data=data.frame(treelist_treetop,
                                                    row.names=sapply(slot(polybuffs, 'polygons'), function(x) slot(x, 'ID'))))
 
-    polyCrown<-polyCrown[na.omit(polyCrown@data),]
-    treelist_treetopsdf<-treelist_treetopsdf[na.omit(treelist_treetopsdf@data),]
+    polyCrown<-polyCrown[!is.na(polyCrown@data$CA),]
+    treelist_treetopsdf<-treelist_treetopsdf[!is.na(treelist_treetopsdf@data$CA),]
 
   })
  }
 
  if ((input$radiustype)=="FR") {
-   #browser()
+   browser()
    treelist_treetop<-tree
    treelist_treetopsdf<-sp::SpatialPointsDataFrame(treelist_treetop[,1:2],data=treelist_treetop)
    treelist_treetopsdf@data$treeID<-1:nrow(treelist_treetop)
@@ -497,9 +497,9 @@ output$summary <- renderTable({
    contour@data$CR<-sqrt(contour@data$CA/pi)
    polyCrown<-merge(contour,treelist_treetopsdf@data, by="treeID")
    polyCrown@data<-polyCrown@data[,c("x","y","Height","CA","CR","treeID")]
-   polyCrown<-polyCrown[na.omit(polyCrown@data),]
+   polyCrown<-polyCrown[!is.na(polyCrown@data$CA),]
    treelist_treetopsdf<-merge(treelist_treetopsdf,contour@data, by="treeID")
-   treelist_treetopsdf<-treelist_treetopsdf[na.omit(treelist_treetopsdf@data),]
+   treelist_treetopsdf<-treelist_treetopsdf[!is.na(treelist_treetopsdf@data$CA),]
    treelist_treetopsdf@data<-treelist_treetopsdf@data[,c("x","y","Height","CA","CR","treeID")]
    treelist_treetop<-treelist_treetopsdf@data
  }
