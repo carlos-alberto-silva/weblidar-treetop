@@ -44,7 +44,6 @@ treetop::launchApp()
 <img src="https://github.com/carlos-alberto-silva/weblidar-treetop/blob/master/readme/weblidar_treetop_app.gif">
 
 # References
-
 Chang, W., Cheng, J., Allaire, J. J., Xie, Y., & McPherson, J. (2021). shiny:
 Web Application Framework for R. https://cran.r-project.org/web/packages/shiny/index.html
 
