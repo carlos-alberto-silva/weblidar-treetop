@@ -238,20 +238,20 @@ output$summary <- renderTable({
 
 
  chmR<-raster(inFile$datapath)
+ chmR[chmR[]<0]<-0
  projecCHM<-raster::projection(chmR)
 
  reschmR<-raster::res(chmR)[1]
- #newst<-extent(chmR)
+ newst<-extent(chmR)
 
+ r1NaM <- is.na(as.matrix(chmR))
+ colNotNA <- which(colSums(r1NaM) != nrow(chmR))
+ rowNotNA <- which(rowSums(r1NaM) != ncol(chmR))
 
- #r1NaM <- is.na(as.matrix(chmR))
- #colNotNA <- which(colSums(r1NaM) != nrow(chmR))
- #rowNotNA <- which(rowSums(r1NaM) != ncol(chmR))
+ exst <- extent(chmR, rowNotNA[1], rowNotNA[length(rowNotNA)],
+                   colNotNA[1], colNotNA[length(colNotNA)])
 
- #exst <- extent(chmR, rowNotNA[1], rowNotNA[length(rowNotNA)],
-#                   colNotNA[1], colNotNA[length(colNotNA)])
-
- #chmR<-crop(chmR,exst)
+ chmR<-crop(chmR,exst)
 
  #if (reschmR<0.25){
  #  validate(
@@ -408,7 +408,7 @@ output$summary <- renderTable({
  if (input$action_button == 0)
    return()
  #withProgress(message = paste('LiDAR data processing.This may take a few seconds','The memory used is',round(mem_used()/1024^2), "Mb."), value = 0.1,detail = detail, {
- withProgress(message = 'LiDAR data processing. This may take a few seconds!', value = 0.1,detail = detail, {
+ withProgress(message = 'LiDAR data processing. This may take a few minutes!', value = 0.1,detail = detail, {
 
     Sys.sleep(10)
 
@@ -476,6 +476,10 @@ output$summary <- renderTable({
     polyCrown = SpatialPolygonsDataFrame(polybuffs,
                                    data=data.frame(treelist_treetop,
                                                    row.names=sapply(slot(polybuffs, 'polygons'), function(x) slot(x, 'ID'))))
+
+    polyCrown<-polyCrown[na.omit(polyCrown@data),]
+    treelist_treetopsdf<-treelist_treetopsdf[na.omit(treelist_treetopsdf@data),]
+
   })
  }
 
@@ -493,7 +497,9 @@ output$summary <- renderTable({
    contour@data$CR<-sqrt(contour@data$CA/pi)
    polyCrown<-merge(contour,treelist_treetopsdf@data, by="treeID")
    polyCrown@data<-polyCrown@data[,c("x","y","Height","CA","CR","treeID")]
+   polyCrown<-polyCrown[na.omit(polyCrown@data),]
    treelist_treetopsdf<-merge(treelist_treetopsdf,contour@data, by="treeID")
+   treelist_treetopsdf<-treelist_treetopsdf[na.omit(treelist_treetopsdf@data),]
    treelist_treetopsdf@data<-treelist_treetopsdf@data[,c("x","y","Height","CA","CR","treeID")]
    treelist_treetop<-treelist_treetopsdf@data
  }
@@ -671,19 +677,23 @@ output$summary <- renderTable({
   chmR0.df<-as.data.frame(chmR0)
   colS<-input$Pallet
 
-  if ( colS =="BlGrRed") {
   myColorRamp <- function(colors, values) {
     v <- (values - min(values))/diff(range(values))
     x <- colorRamp(colors)(v)
     head(x)
     rgb(x[,1], x[,2], x[,3], maxColorValue = 255)
   }
-  col.rev <- myColorRamp(c("blue","green","yellow","red"),0:255)
-  } else {
 
+  if ( colS =="BlGrRed") {col.rev <- myColorRamp(c("blue","green","yellow","red"),0:255)}
+  if ( colS =="Viridis") {col.rev <- myColorRamp(c("#440154FF","#482878FF","#3E4A89FF",
+                                                   "#31688EFF","#26828EFF","#1F9E89FF",
+                                                   "#35B779FF","#6DCD59FF","#B4DE2CFF",
+                                                   "#FDE725FF"),0:255)}
+
+  if ( !colS =="BlGrRed" & !colS =="Viridis") {
   col<-brewer.pal(9,colS)
   col.rev<-rev(col)
-}
+  }
   tree.xy<-data.frame(tree[,1:2])
   tree.xy <- data.frame(na.omit(tree.xy))
   plot(chmR0,col=col.rev,axes = T, xlab="",ylab="",useRaster=F)
@@ -704,19 +714,23 @@ output$summary <- renderTable({
         bg = "white", res = 100)
 
     colS<-input$Pallet
-      if ( colS =="BlGrRed") {
- myColorRamp <- function(colors, values) {
-    v <- (values - min(values))/diff(range(values))
-    x <- colorRamp(colors)(v)
+    myColorRamp <- function(colors, values) {
+      v <- (values - min(values))/diff(range(values))
+      x <- colorRamp(colors)(v)
+      head(x)
+      rgb(x[,1], x[,2], x[,3], maxColorValue = 255)
+    }
 
-    head(x)
-    rgb(x[,1], x[,2], x[,3], maxColorValue = 255)
-  }
-  col.rev <- myColorRamp(c("blue","green","yellow","red"),0:255)
-  } else {
-  col<-brewer.pal(9,colS)
-  col.rev<-rev(col)
- }
+    if ( colS =="BlGrRed") {col.rev <- myColorRamp(c("blue","green","yellow","red"),0:255)}
+    if ( colS =="Viridis") {col.rev <- myColorRamp(c("#440154FF","#482878FF","#3E4A89FF",
+                                                     "#31688EFF","#26828EFF","#1F9E89FF",
+                                                     "#35B779FF","#6DCD59FF","#B4DE2CFF",
+                                                     "#FDE725FF"),0:255)}
+
+    if ( !colS =="BlGrRed" & !colS =="Viridis") {
+      col<-brewer.pal(9,colS)
+      col.rev<-rev(col)
+    }
     tree.xy<-data.frame(tree[,1:2])
     tree.xy <- data.frame(na.omit(tree.xy))
     plot(chmR0,col=col.rev,axes = T, xlab="UTM Easting",ylab="UTM Northing")
@@ -812,11 +826,18 @@ output$summary <- renderTable({
 
      if ((input$plot3Dradio)=="plotCHM3D") {
        colS<-input$Pallet
-       if (colS =="BlGrRed") {
-         myPal<-c("blue","green","yellow","red")
-       } else {
-         myPal <- rev(brewer.pal(9, colS))
+
+       if ( colS =="BlGrRed") {myPal <- c("blue","green","yellow","red")}
+       if ( colS =="Viridis") {myPal <- c("#440154FF","#482878FF","#3E4A89FF",
+                                                        "#31688EFF","#26828EFF","#1F9E89FF",
+                                                        "#35B779FF","#6DCD59FF","#B4DE2CFF",
+                                                        "#FDE725FF")}
+
+       if ( !colS =="BlGrRed" & !colS =="Viridis") {
+         col<-brewer.pal(9,colS)
+         myPal<-rev(col)
        }
+
        while (rgl.cur() > 0) { try(rgl.close()) }
 
        CHM3Dvis1<-CHM3Dvis(chm=chmR0,colR=myPal,xlab="",ylab="",zlab="Height (m)")
