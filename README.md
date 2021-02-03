@@ -33,7 +33,7 @@ devtools::install_git("https://github.com/carlos-alberto-silva/weblidar-treetop"
 
 ```    
 
-## Loading and lauch treetop application
+## Loading and launching treetop application
 ```r
 library(treetop)
 treetop::launchApp()
