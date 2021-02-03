@@ -21,17 +21,18 @@ The treetop application provides options for i) detecting individual trees from 
 Download and install git: https://git-scm.com/
 
 # R packages
-packages = c("shiny","RColorBrewer","spatstat","raster","sp",
-               "geometry","maptools","rgdal","rgl","lidR","pryr","devtools")
+packages = c("devtools","shiny","RColorBrewer","spatstat","raster","sp",
+               "geometry","maptools","rgdal","rgl","lidR","pryr")
 
 # Now load or install&load all
 package.check <- lapply(
   packages,
   FUN = function(x) {
-    if (!require(x, character.only = TRUE)) {
+    if (require(x, character.only = TRUE)) { 
+      detach(x, unload = TRUE)
+    }
       install.packages(x, dependencies = TRUE)
       library(x, character.only = TRUE)
-    }
   }
 )
 
