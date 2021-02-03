@@ -170,7 +170,7 @@ CHM3Dvis<-function(chm,colR=col.rev,xlab="UTM Easting",ylab="UTM Northing",zlab=
     x <- colorRamp(colors)(v)
      rgb(x[,1], x[,2], x[,3], maxColorValue = 255)
   }
-  surface3d(X, Y, Z, col=myColorRamp(colR,Z))
+   rgl::surface3d(X, Y, Z, col=myColorRamp(colR,Z))
 }
 
 GiniCoeff <- function (x, finite.sample = TRUE, na.rm = TRUE){
@@ -410,7 +410,7 @@ output$summary <- renderTable({
  #withProgress(message = paste('LiDAR data processing.This may take a few seconds','The memory used is',round(mem_used()/1024^2), "Mb."), value = 0.1,detail = detail, {
  withProgress(message = 'LiDAR data processing. This may take a few minutes!', value = 0.1,detail = detail, {
 
-    Sys.sleep(10)
+    #Sys.sleep(10)
 
  isolate({
   # tree dectetion by local maximum - FWS
@@ -523,15 +523,15 @@ output$summary <- renderTable({
 
   } else {
   par(mfrow=c(1,2), mar=c(4.5,4,2,5))
-  chmR0.df<-as.data.frame(chmR0)
+  chm_hts<-na.omit(chmR0[])
   isolate({
-    chmR0.df<-subset(chmR0.df,chmR0.df[,1]>=Htreshoud)
+    chm_hts<-chm_hts[chm_hts>=Htreshoud]
   })
-  dens<-density(chmR0.df[,1],adjust = 1.3, kernel = "gaussian")
+  dens<-density(chm_hts,adjust = 1.3, kernel = "gaussian")
   par(mfrow=c(1,3), mar=c(5,5,2,2))
-  plot(dens$y,dens$x, cex.lab=2,col="black",xlab="Density",ylab="Height (m)",type="line",lwd="1",ylim=c(0,max(chmR0.df[,1]*1.3)))
+  plot(dens$y,dens$x, cex.lab=2,col="black",xlab="Density",ylab="Height (m)",type="line",lwd="1",ylim=c(0,max(chm_hts*1.3)))
   polygon(dens$y,dens$x, col=input$profColor, border="black")
-  boxplot(chmR0.df[,1], cex.lab=2, ylim=c(0,max(chmR0.df[,1])*1.3),horizontal=F, col=input$profColor,ylab="Height (m)")
+  boxplot(chm_hts, cex.lab=2, ylim=c(0,max(chm_hts)*1.3),horizontal=F, col=input$profColor,ylab="Height (m)")
   boxplot(treelist_treetopsdf@data$CA,ylim=c(0,max(treelist_treetopsdf@data$CA)*1.3),cex.lab=2, horizontal=F, col=input$profColor,ylab="Crown Area (m2)")
    }
   },height = 360,width=850)
@@ -544,14 +544,15 @@ output$summary <- renderTable({
           bg = "white", res = 100)
 
       par(mfrow=c(1,2), mar=c(4.5,4,2,5))
-      chmR0.df<-as.data.frame(chmR0)
+      chm_hts<-na.omit(chmR0[])
       isolate({
-      chmR0.df<-subset(chmR0.df,chmR0.df[,1]>=Htreshoud)})
-      dens<-density(chmR0.df[,1],adjust = 1.3, kernel = "gaussian")
+        chm_hts<-chm_hts[chm_hts>=Htreshoud]
+      })
+      dens<-density(chm_hts,adjust = 1.3, kernel = "gaussian")
       par(mfrow=c(1,3), mar=c(5,5,2,2))
-      plot(dens$y,dens$x, cex.lab=2,col="black",xlab="Density",ylab="Height (m)",type="line",lwd="1",ylim=c(0,max(chmR0.df[,1]*1.3)))
+      plot(dens$y,dens$x, cex.lab=2,col="black",xlab="Density",ylab="Height (m)",type="line",lwd="1",ylim=c(0,max(chm_hts*1.3)))
       polygon(dens$y,dens$x, col=input$profColor, border="black")
-      boxplot(chmR0.df[,1], cex.lab=2, ylim=c(0,max(chmR0.df[,1])*1.3),horizontal=F, col=input$profColor,ylab="Height (m)")
+      boxplot(chm_hts, cex.lab=2, ylim=c(0,max(chm_hts)*1.3),horizontal=F, col=input$profColor,ylab="Height (m)")
       boxplot(treelist_treetopsdf@data$CA,ylim=c(0,max(treelist_treetopsdf@data$CA)*1.3),cex.lab=2, horizontal=F, col=input$profColor,ylab="Crown Area (m2)")
       dev.off()},
     contentType = 'image/png'
@@ -674,7 +675,6 @@ output$summary <- renderTable({
     text(.5,.35, "Proportion above the mean = ", pos = 4); text(.9,.35,format(L.mean,digits=2), pos = 4 )
        } else {
 
-  chmR0.df<-as.data.frame(chmR0)
   colS<-input$Pallet
 
   myColorRamp <- function(colors, values) {
@@ -820,9 +820,9 @@ output$summary <- renderTable({
 
 
  isolate({
-   output$PLOT3D <- renderRglwidget({
+   output$PLOT3D <- rgl::renderRglwidget({
 
-     while (rgl.cur() > 0) { try(rgl.close())}
+     while (rgl::rgl.cur() > 0) { try(rgl::rgl.close())}
 
      if ((input$plot3Dradio)=="plotCHM3D") {
        colS<-input$Pallet
@@ -838,14 +838,14 @@ output$summary <- renderTable({
          myPal<-rev(col)
        }
 
-       while (rgl.cur() > 0) { try(rgl.close()) }
+       while (rgl::rgl.cur() > 0) { try(rgl::rgl.close()) }
 
        CHM3Dvis1<-CHM3Dvis(chm=chmR0,colR=myPal,xlab="",ylab="",zlab="Height (m)")
        rm(CHM3Dvis1)
-       axes3d(c("x-", "y-"), col="black")
-       title3d(xlab = "UTM Easting", ylab = "UTM Northing")#, col="green")
-       aspect3d(1,1,0.5)
-       rglwidget()
+       rgl::axes3d(c("x-", "y-"), col="black")
+       rgl::title3d(xlab = "UTM Easting", ylab = "UTM Northing")#, col="green")
+       rgl::aspect3d(1,1,0.5)
+       rgl::rglwidget()
 
      } else {
 
@@ -871,7 +871,7 @@ output$summary <- renderTable({
 
            }
 
-           while (rgl.cur() > 0) { while (rgl.cur() > 0) { try(rgl.close()) } }
+           while (rgl::rgl.cur() > 0) { while (rgl::rgl.cur() > 0) { try(rgl::rgl.close()) } }
            withProgress(message = paste('Rendering',nrow(treelist_treetopsdf@data),"trees in 3D.",detail2), value = 0.1,detail = 'This may take a few seconds......', {
              Sys.sleep(10)
 
