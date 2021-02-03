@@ -15,38 +15,29 @@ The treetop application provides options for i) detecting individual trees from 
 ## Installation
 ```r
 
-# Dependecies for the treetop package
+## Dependecies for the treetop package
 
 # Git  
 Download and install git: https://git-scm.com/
 
 # R packages
-packages = c("devtools","shiny","RColorBrewer","spatstat","raster","sp",
-               "geometry","maptools","rgdal","rgl","lidR","pryr")
+install.packages("pacman")
+library(pacman)
 
-# Now load or install&load all
-package.check <- lapply(
-  packages,
-  FUN = function(x) {
-    if (require(x, character.only = TRUE)) { 
-      detach(x, unload = TRUE)
-    }
-      install.packages(x, dependencies = TRUE)
-      library(x, character.only = TRUE)
-  }
-)
+p_load(devtools, shiny, RColorBrewer, spatstat, raster, sp,
+       geometry, maptools, rgdal, rgl, lidR, pryr, update=TRUE)
 
-# Install the treetop development version:
+
+## Install the treetop development version:
 devtools::install_git("https://github.com/carlos-alberto-silva/weblidar-treetop", dependencies = FALSE)
-
-# loading treetop package
-library(treetop)
 
 ```    
 
-## Launch the treetop application
+## Loading and lauch treetop application
 ```r
+library(treetop)
 treetop::launchApp()
+
 ```
 <img src="https://github.com/carlos-alberto-silva/weblidar-treetop/blob/master/readme/weblidar_treetop_app.gif">
 
