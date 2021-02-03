@@ -484,7 +484,7 @@ output$summary <- renderTable({
  }
 
  if ((input$radiustype)=="FR") {
-   browser()
+   #browser()
    treelist_treetop<-tree
    treelist_treetopsdf<-sp::SpatialPointsDataFrame(treelist_treetop[,1:2],data=treelist_treetop)
    treelist_treetopsdf@data$treeID<-1:nrow(treelist_treetop)
