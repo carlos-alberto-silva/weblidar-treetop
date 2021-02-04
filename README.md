@@ -29,7 +29,7 @@ p_unload(pacman::p_loaded(), character.only = TRUE)
 
 # Install and load all dependencies
 p_load(devtools, shiny, RColorBrewer, spatstat, raster, sp,
-       geometry, maptools, rgdal, rgl, lidR, pryr, update=TRUE)
+       geometry, maptools, rgdal, rgl, lidR, pryr, sf, starts,update=TRUE)
 
 
 ## Install the treetop development version:

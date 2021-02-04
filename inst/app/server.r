@@ -161,7 +161,7 @@ CHM3Dvis<-function(chm,colR=col.rev,xlab="UTM Easting",ylab="UTM Northing",zlab=
   Z<-cbind(rep(0,nrow(Z)),Z,rep(0,nrow(Z)))
   Z<-rbind(rep(0,ncol(Z)),Z,rep(0,ncol(Z)))
 
-  zd<-as.data.frame(Z)
+  #zd<-as.data.frame(Z)
 
   Z[is.na(Z)]=min(Z, na.rm =TRUE)
   Z[is.na(Z)]=0
@@ -408,7 +408,7 @@ output$summary <- renderTable({
  if (input$action_button == 0)
    return()
  #withProgress(message = paste('LiDAR data processing.This may take a few seconds','The memory used is',round(mem_used()/1024^2), "Mb."), value = 0.1,detail = detail, {
- withProgress(message = 'LiDAR data processing. This may take a few minutes!', value = 0.1,detail = detail, {
+ withProgress(message = 'LiDAR data processing. This may take a few minutes!', min = 0, max = 1, value = 0.1,detail = detail, {
 
     #Sys.sleep(10)
 
@@ -446,7 +446,12 @@ output$summary <- renderTable({
   #if(exists("decTREE")){rm(decTREE)}
  })
 
+   incProgress(0.2, message = paste("Total of",nrow(tree),"individual trees detected!"))
+   Sys.sleep(0.5)
 
+
+   incProgress(0.2, message = "Starting individual tree crown delineation")
+   Sys.sleep(0.5)
  if ((input$radiustype)=="VR") {
  isolate({
     treelist_treetop<-tree
@@ -490,11 +495,17 @@ output$summary <- renderTable({
    treelist_treetopsdf@data$treeID<-1:nrow(treelist_treetop)
    crowns=lidR::silva2016(chmR, treelist_treetopsdf,max_cr_factor = input$maxcrown,exclusion = input$exclusion,
                           ID = "treeID")()
-   contour = raster::rasterToPolygons(crowns, dissolve = TRUE)
+   contour_sf <- sf::st_as_sf(stars::st_as_stars(crowns),as_points = FALSE, merge = TRUE)
+   contour<-sf::as_Spatial(contour_sf)
+
+
+   #contour = raster::rasterToPolygons(crowns, dissolve = TRUE)
    rm(crowns)
-   colnames(contour@data)<-"treeID"
+   colnames(contour@data)[1]<-"treeID"
    contour@data$CA<-raster::area(contour)
    contour@data$CR<-sqrt(contour@data$CA/pi)
+   contour <- contour[order(contour$treeID, contour$CA, decreasing=TRUE),]
+   contour <- contour[!duplicated(contour$treeID),]
    polyCrown<-merge(contour,treelist_treetopsdf@data, by="treeID")
    polyCrown@data<-polyCrown@data[,c("x","y","Height","CA","CR","treeID")]
    polyCrown<-polyCrown[!is.na(polyCrown@data$CA),]
@@ -504,6 +515,8 @@ output$summary <- renderTable({
    treelist_treetop<-treelist_treetopsdf@data
  }
 
+   incProgress(0.4, message = "Preparing for rendering...1%")
+   Sys.sleep(0.5)
 
  output$hist <- renderPlot({
   if ((input$plotProfile)=="plotRipley") {
@@ -558,6 +571,8 @@ output$summary <- renderTable({
     contentType = 'image/png'
   )})
 
+ incProgress(0.4, message = "Preparing for rendering...20%")
+ Sys.sleep(0.5)
 
 # download Ripley's K and L figure
  isolate({
@@ -584,6 +599,8 @@ output$summary <- renderTable({
     contentType = 'image/png'
   )})
 
+ incProgress(0.5, message = "Preparing for rendering...30%")
+ Sys.sleep(0.5)
 
  isolate({
   output$downloadCHM2d <- downloadHandler(
@@ -632,6 +649,9 @@ output$summary <- renderTable({
       },
     contentType = 'image/png'
   )})
+
+ incProgress(0.6, message = "Preparing for rendering...40%")
+ Sys.sleep(0.5)
 
  # plot CHM 2D or lorenzCurve
  isolate({
@@ -703,6 +723,8 @@ output$summary <- renderTable({
   },height = 600,width=600)
 })
 
+ incProgress(0.7, message = "Preparing for rendering...50%")
+ Sys.sleep(0.5)
 
  # download CHM 2d
  isolate({
@@ -765,6 +787,9 @@ output$summary <- renderTable({
  })
  }
 
+ incProgress(0.8, message = "Preparing for rendering...70%")
+ Sys.sleep(0.5)
+
  output$downloadShp <- downloadHandler(
   filename = 'TreeCrownExport.zip',
   content = function(file) {
@@ -772,7 +797,7 @@ output$summary <- renderTable({
       file.remove(Sys.glob("TreeCrownExport.*"))
     }
 
-    setwd(treelist_treetopdir())
+    setwd(tempdir())
     writeOGR(createShp(), dsn="TreeCrownExport.shp", layer="TreeCrownExport", driver="ESRI Shapefile")
     zip(zipfile='TreeCrownExport.zip', files=Sys.glob("TreeCrownExport.*"))
     file.copy("TreeCrownExport.zip", file)
@@ -805,7 +830,7 @@ output$summary <- renderTable({
     if (length(Sys.glob("TreeLocationExport.*"))>0){
       file.remove(Sys.glob("TreeLocationExport.*"))
     }
-    setwd(treelist_treetopdir())
+    setwd(tempdir())
     writeOGR(createShpXY(), dsn="TreeLocationExport.shp",
       layer="TreeLocationExport", driver="ESRI Shapefile")
     zip(zipfile='TreeLocationExport.zip', files=Sys.glob("TreeLocationExport.*"))
@@ -818,6 +843,8 @@ output$summary <- renderTable({
 
 #########################################
 
+ incProgress(0.9, message = "Preparing for rendering...90%")
+ Sys.sleep(0.5)
 
  isolate({
    output$PLOT3D <- rgl::renderRglwidget({
@@ -904,6 +931,8 @@ output$summary <- renderTable({
  })
 
 
+ incProgress(0.9, message = "Preparing for rendering...99%")
+ Sys.sleep(0.5)
 
  output$TreelistR <- renderUI({
   div(style="margin-left:332px;margin-top: -33px;width:300px",
@@ -966,7 +995,10 @@ output$summary <- renderTable({
 
   LiDARsummary<-data.frame(cbind(NameExp,MetricsExp))
   colnames(LiDARsummary)<-c("Parameters", "Value")
+  incProgress(0.99, message = "It is almost done. Stay there...!")
+  Sys.sleep(1.5)
   LiDARsummary
+
  })
  })
 #    },
@@ -974,7 +1006,10 @@ output$summary <- renderTable({
 #  withProgress(message = 'An error occurred. The app will be reloaded shortly', value = 0.1,detail = '', {Sys.sleep(10)})
 #    session$reload()
 #  })
+
  })
 ################################################################################
+
 })
+
 ################################################################################
