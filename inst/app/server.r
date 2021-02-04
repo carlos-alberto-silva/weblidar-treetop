@@ -126,7 +126,7 @@ shinyServer(function(input, output, session) {
 
     }
     newList<-rbind(kljzbaseNew,mMatrix,klj)
-    lines3d(newList, col=crowncolor, add=T,box=F)
+    rgl::lines3d(newList, col=crowncolor, add=T,box=F)
     }
 
 	if (shape==2){interpol(klj,col=crowncolor)}
@@ -143,7 +143,7 @@ shinyServer(function(input, output, session) {
 	if (Ht<=5){col=sample(c("green3","green3","darkgreen"),nrow(NewList), TRUE)}
 	if (Ht>5){col="darkgreen"}
 
-	lines3d(NewList, col=col, add=T)
+	rgl::lines3d(NewList, col=col, add=T)
 	}
  }
 
