@@ -28,6 +28,7 @@ library(pacman)
 p_unload(pacman::p_loaded(), character.only = TRUE)
 
 # Install and load all dependencies
+library(pacman)
 p_load(devtools, shiny, RColorBrewer, spatstat, raster, rasterVis, sp,
        geometry, maptools, rgdal, rgl, lidR, pryr, sf, stars)#, update=TRUE)
 
