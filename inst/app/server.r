@@ -149,29 +149,6 @@ shinyServer(function(input, output, session) {
 
 
 
-CHM3Dvis<-function(chm,colR=col.rev,xlab="UTM Easting",ylab="UTM Northing",zlab="Height (m)") {
-
-  X <- xFromCol(chm)
-  Y <- yFromRow(chm)
-  Z <- t((getValues(chm, format='matrix')))
-
-  X <- c(min(X),X,max(X))
-  Y <- c(max(Y),Y,min(Y))
-
-  Z<-cbind(rep(0,nrow(Z)),Z,rep(0,nrow(Z)))
-  Z<-rbind(rep(0,ncol(Z)),Z,rep(0,ncol(Z)))
-
-  #zd<-as.data.frame(Z)
-
-  Z[is.na(Z)]=min(Z, na.rm =TRUE)
-  Z[is.na(Z)]=0
-   myColorRamp <- function(colors, values) {
-    v <- (values - min(values))/diff(range(values))
-    x <- colorRamp(colors)(v)
-     rgb(x[,1], x[,2], x[,3], maxColorValue = 255)
-  }
-   rgl::surface3d(X, Y, Z, col=myColorRamp(colR,Z))
-}
 
 GiniCoeff <- function (x, finite.sample = TRUE, na.rm = TRUE){
   if (!na.rm && any(is.na(x)))
@@ -199,21 +176,6 @@ output$summary <- renderTable({
     })
 
 
- # tryCatch(
-#    expr = {
-
-  #    if (input$action_button == 1) {
-   #     session$reload()}
-
-      #if(exists("chmR")){rm(chmR)}
-      #if(exists("chmR0")){rm(chmR0)}
-      #if(exists("decTREE")){rm(decTREE)}
-      #if(exists("r")){rm(r)}
-      #if(exists("treeMer")){rm(treeMer)}
-      #if(exists("exst")){rm(exst)}
-      #if(exists("tree")){rm(tree)}
-      #if(exists("treelist_treetop")){rm(treelist_treetop)}
-
   output$pageviews <-  renderText({
     if (!file.exists("pageviews.Rdata")) pageviews <- 0 else load(file="pageviews.Rdata")
     pageviews <- pageviews + 1
@@ -224,11 +186,12 @@ output$summary <- renderTable({
 
   if ((input$Mydata)=="ED") {
 
-    chmR<- raster::raster(system.file('extdata', 'Eglin_plot1.asc', package='treetop'))
+  chmR<- raster::raster(system.file('extdata', 'Eglin_plot1.asc', package='treetop'))
 
   chmR0<-chmR
   projecCHM<-raster::projection(chmR)
   detail<-""
+  area_ha <- 2.5
   } else {
 
 
@@ -240,7 +203,7 @@ output$summary <- renderTable({
  chmR<-raster(inFile$datapath)
  chmR[chmR[]<0]<-0
  projecCHM<-raster::projection(chmR)
-
+ area_ha<-0
  reschmR<-raster::res(chmR)[1]
  newst<-extent(chmR)
 
@@ -250,40 +213,36 @@ output$summary <- renderTable({
 
  exst <- extent(chmR, rowNotNA[1], rowNotNA[length(rowNotNA)],
                    colNotNA[1], colNotNA[length(colNotNA)])
-
  chmR<-crop(chmR,exst)
+ chmR0<-chmR
 
- #if (reschmR<0.25){
- #  validate(
- #    need(reschmR==1, 'The spatial resolution of the CHM must to be 1m'))
-  #stop()
- #  withProgress(message = "The grid cell size of the CHM file should be equal or higher then 1m", value = 0.1,detail = "The app will be restarted", {
- #    Sys.sleep(10)
- #  })
- #  session$reload()
- #}
+  }
 
- #plotlength<-86.60254
- #packages<-c("RColorBrewer","spatstat","raster",
- #             "sp","geometry","maptools",#moments,plotrix,rasterVis,rmarkdown
- #            "rgdal","rgl","shiny","lidR","pryr")
- #
- #pac_missing<-NULL
- #for ( i in packages){
- #   if (!require(i, character.only = TRUE)) {
- #     withProgress(message = paste0("Note: the dependency ",i," is missing. It will be installed automatically."), value = 0.1,detail = "This might take a few minutes!", {
- #     install.packages(x, dependencies = TRUE)
- #       library(x, character.only = TRUE)
- #      })
- #   }
- # }
- area_ha <- (ncell(chmR)*reschmR^2)/10000
 
- if (area_ha > 30000){
-     withProgress(message = "Note: the study area is larger then 2ha. Please check the file extent or upload a smaller CHM file.", value = 0.1,detail = "The app will be restarted in a few seconds!", {
-       Sys.sleep(10)
-     })
-     session$reload()
+ isolate({
+ area_ha <- (ncell(chmR)*raster::res(chmR)[1]^2)/1000
+
+
+ if (area_ha > 1000){
+
+   grid <- aggregate(chmR, fact=500/res(chmR))
+   grid_spdf <- as(grid, "SpatialPolygonsDataFrame")
+   grid_spdf<-grid_spdf[!is.na(grid_spdf@data[,1]),]
+
+   #grid <- raster(extent(chmR)+c(-500,+500,-500,+500), resolution = 500)
+   grid_spdf@data$id <- 1:nrow(grid_spdf@data)
+
+   #div(style = "color:white",uiOutput("tiles"))
+   output$tiles <- renderUI({
+
+     div(style="margin-left:1px;margin-top: -20px;width:245px",
+
+         selectizeInput("tiles_list", label="Select tiles", choices=c("All",grid_spdf@data$id), selected = "All", multiple = TRUE,
+                        options = NULL))
+
+     #div(style="margin-left: 2px;margin-top:-10px;",numericInput("HTboxI", "", 1.37))
+   })
+
 
    #exst<-extent(chmR)
   #newst<-extent(mean(exst[1:2])-plotlength,mean(exst[1:2])+plotlength,mean(exst[3:4])-plotlength,mean(exst[3:4])+plotlength)
@@ -295,31 +254,8 @@ output$summary <- renderTable({
   #} else {
   #  detail<-paste0("Note: the study area is larger then 3ha. We have resampled the file extent to 3ha using xmin: ",newst[1],"; xmax: ",newst[2],
   #                 "; ymin: ",newst[3],"; ymax: ",newst[4]," extent.")}
-  } else {
-
-    if (reschmR<0.5){
-    detail<-paste0("Please note: The the grid cell size of the CHM file is smaller then 0.5m. We have resampled it to 0.5m.")
-    } else {detail<-""}
   }
-
- if (reschmR<0.5){
-    #  validate(
-    #    need(reschmR==1, 'The spatial resolution of the CHM must to be 1m'))
-    #stop()
-    #withProgress(message = "The grid cell size of the CHM file is smaller then 1m", value = 0.1,detail = ". It has been resampled to 1m now.", {
-    #  Sys.sleep(10)
-    #})
-
-    rnull <- raster()
-    extent(rnull) <- round(newst)
-    res(rnull) <-0.5
-    rnull2 <- setExtent(rnull, round(newst))
-    chmR <- raster::resample(chmR, rnull2, method='ngb')
-    projection(chmR) <-projecCHM
-
- }
- chmR0<-chmR
- }
+})
 
 
  isolate({
@@ -342,7 +278,7 @@ output$summary <- renderTable({
       if ( input$wsf=="17x17"){
         fws=17 }
       wf<-matrix(c(rep(1,fws*fws)),nrow=fws,ncol=fws)
-      chmR <- raster::focal(chmR, w=wf, fun=mean)
+      #chmR <- raster::focal(chmR, w=wf, fun=mean)
     }
 
     if (input$filtertype=="Median") {
@@ -363,7 +299,7 @@ output$summary <- renderTable({
       if ( input$wsf=="17x17"){
         fws=17 }
       wf<-matrix(c(rep(1,fws*fws)),nrow=fws,ncol=fws)
-      chmR <- raster::focal(chmR, w=wf, fun=median)
+      #chmR <- raster::focal(chmR, w=wf, fun=median)
     }
 
     if (input$filtertype=="Gaussian") {
@@ -380,12 +316,13 @@ output$summary <- renderTable({
         m / sum(m)
       }
       gf=fgauss(input$Sigma)
-      chmR <- raster::focal(chmR, w=gf)}
+      #chmR <- raster::focal(chmR, w=gf)
+      }
   }
 
   output$HTtype <- renderUI({
-  div(style = "margin-left:2px; width:250px;margin-top:-5px; color:white",
-    radioButtons("HTtypeI", "Tree Height Threshold",list("Slide bar" = "slidebar",
+  div(style = "margin-left:2px; width:250px;margin-top:-10px; color:white",
+    radioButtons("HTtypeI", "Tree height threshold",list("Slide bar" = "slidebar",
       "Numeric input" = "numericbox"),inline = TRUE))
   })
 
@@ -393,14 +330,163 @@ output$summary <- renderTable({
     div(style="margin-left: 2px;margin-top:-10px;",numericInput("HTboxI", "", 1.37))
   })
 
+  chm_hts<-chmR0[!is.na(chmR0)]
+
   output$HTsliderO <- renderUI({
-    min<-min(getValues(chmR),na.rm=TRUE)
-    max<-round(max(getValues(chmR),na.rm=TRUE),digits=2)
+    min<-min(chm_hts,na.rm=TRUE)
+    max<-round(max(chm_hts,na.rm=TRUE),digits=2)
     value<-min+1.37
     div(style = "color:white;margin-left: 2px;margin-top:-10px;",
       sliderInput("HTsliderI","",min,max,value,step=0.01,sep="#.##"))
     })
+
+
+  # plot CHM 2D or lorenzCurve
+  isolate({
+    output$CHMplot2D <- renderPlot({
+        colS<-input$Pallet
+
+        if  ( area_ha > 1000){
+          message = "Displaying the uploaded CHM file. Note: the study area is larger then 1000ha. We will active the tile option."
+          detail = "Please select tiles, parameters for processing and click on run!"
+        } else{
+             message = "Displaying the uploaded CHM file."
+            detail = "Please select parameters for processing and click on run!"
+          }
+
+        withProgress(message = message,
+                     value = 1,detail = detail, {
+        Sys.sleep(2)
+
+        myColorRamp <- function(colors, values) {
+          v <- (values - min(values))/diff(range(values))
+          x <- colorRamp(colors)(v)
+          head(x)
+          rgb(x[,1], x[,2], x[,3], maxColorValue = 255)
+        }
+
+        if ( colS =="BlGrRed") {col.rev <- myColorRamp(c("blue","green","yellow","red"),0:255)}
+        if ( colS =="Viridis") {col.rev <- myColorRamp(c("#440154FF","#482878FF","#3E4A89FF",
+                                                         "#31688EFF","#26828EFF","#1F9E89FF",
+                                                         "#35B779FF","#6DCD59FF","#B4DE2CFF",
+                                                         "#FDE725FF"),0:255)}
+
+        if ( !colS =="BlGrRed" & !colS =="Viridis") {
+          col<-RColorBrewer::brewer.pal(9,colS)
+          col.rev<-rev(col)
+        }
+        par(mar=c(4,4,2,2))
+
+        if (area_ha < 1000){
+          raster::plot(chmR0,col=col.rev,axes = T, xlab="",ylab="",useRaster=F, legend=F)
+#browser()
+          r.range <- c(min(chm_hts, na.rm=T), max(chm_hts, na.rm=T))
+          plot(chmR0, legend.only=TRUE, col=col.rev,
+               legend.width=1, legend.shrink=0.75,#smallplot=c(0.9,1, .3,.75),
+               axis.args=list(at=seq(r.range[1], r.range[2], 2),
+                              labels=seq(r.range[1], r.range[2], 2),
+                              cex.axis=1.5),
+               legend.args=list(text='Height (m)', side=4, font=2, line=2.5, cex=1.5))
+        }else{
+          raster::plot(grid_spdf, border="red", lwd=2, axes=F)
+          raster::plot(chmR0,col=col.rev,axes = F, xlab="",ylab="",useRaster=F, add=T, legend=F)
+          axis(1);axis(2)
+          r.range <- c(minValue(chmR0), maxValue(chmR0))
+          plot(chmR0, legend.only=TRUE, col=col.rev,
+               legend.width=1, legend.shrink=0.75,#smallplot=c(0.9,1, .3,.75),
+               axis.args=list(at=seq(r.range[1], r.range[2], 2),
+                              labels=seq(r.range[1], r.range[2], 2),
+                              cex.axis=1.5),
+               legend.args=list(text='Height (m)', side=4, font=2, line=2.7, cex=1.5))
+
+          raster::plot(grid_spdf, add=T, axes=F,border="red", lwd=2)
+          points(coordinates(grid_spdf),labels=grid_spdf$id, cex = 8, pch=16, col="gray")
+          text(coordinates(grid_spdf),labels=grid_spdf$id, cex = 1.5, col="black")
+        }
+    })},height = 600,width=650)
   })
+
+
+
+
+
+  output$hist <- renderPlot({
+      par(mfrow=c(1,2), mar=c(4.5,4,2,5))
+      dens<-density(chm_hts,adjust = 1.3, kernel = "gaussian")
+      #par(mfrow=c(1,3), mar=c(5,5,2,2))
+      plot(dens$y,dens$x, cex.lab=2,col="black",xlab="Density",ylab="Height (m)",type="line",lwd="1",ylim=c(0,max(chm_hts*1.3)))
+      polygon(dens$y,dens$x, col=input$profColor, border="black")
+      boxplot(chm_hts, cex.lab=2, ylim=c(0,max(chm_hts)*1.3),horizontal=F, col=input$profColor,ylab="Height (m)")
+
+  },height = 360,width=850)
+
+
+
+
+  isolate({
+    output$PLOT3D <- rgl::renderRglwidget({
+
+      while (rgl::rgl.cur() > 0) { try(rgl::rgl.close())}
+
+        colS<-input$Pallet
+        myColorRamp <- function(colors, values) {
+          v <- (values - min(values))/diff(range(values))
+          x <- colorRamp(colors)(v)
+          rgb(x[,1], x[,2], x[,3], maxColorValue = 255)
+        }
+
+        if ( colS =="BlGrRed") {myPal <- myColorRamp(c("blue","green","yellow","red"),0:255)}
+        if ( colS =="Viridis") {myPal <- myColorRamp(c("#440154FF","#482878FF","#3E4A89FF",
+                                                       "#31688EFF","#26828EFF","#1F9E89FF",
+                                                       "#35B779FF","#6DCD59FF","#B4DE2CFF",
+                                                       "#FDE725FF"),0:255)}
+
+        if ( !colS =="BlGrRed" & !colS =="Viridis") {
+          col<-RColorBrewer::brewer.pal(9,colS)
+          myPal<-rev(col)
+        }
+
+        while (rgl::rgl.cur() > 0) { try(rgl::rgl.close()) }
+
+        rasterVis::plot3D(chmR0,col=myPal,xlab="",ylab="",zlab="Height (m)")
+        #CHM3Dvis1<-CHM3Dvis(chm=chmR0,colR=myPal,xlab="",ylab="",zlab="Height (m)")
+        #rm(CHM3Dvis1)
+        rgl::axes3d(c("x-", "y-"), col="black")
+        rgl::title3d(xlab = "UTM Easting", ylab = "UTM Northing")#, col="green")
+        #rgl::aspect3d(1,1,0.5)
+        rgl::rglwidget()
+
+   })
+  })
+
+  isolate ({
+    output$summary2 <- renderTable({
+
+    NameExp<-c("Number of grid cells","Hmax","Hmean","Hmin","Hmedian","Hvar","Hsd","Hcv","Hkurtosis","Hskewness")
+    MetricsExp<-c(length(chm_hts),
+                  round(max(chm_hts),digits=2),
+                  round(mean(chm_hts),digits=2),
+                  round(min(chm_hts),digits=2),
+                  round(median(chm_hts),digits=2),
+                  round(var(chm_hts),digits=2),
+                  round(sd(chm_hts),digits=2),
+                  round(mean(chm_hts)/sd(chm_hts),digits=2),
+                  round(kurtosis(chm_hts),digits=2),
+                  round(skewness(chm_hts),digits=2))
+
+    LiDARsummary<-data.frame(cbind(NameExp,MetricsExp))
+    colnames(LiDARsummary)<-c("Parameters", "Value")
+    #Sys.sleep(1.5)
+    LiDARsummary
+
+   })
+  })
+ })
+
+
+
+
+
 
 
 
@@ -408,9 +494,21 @@ output$summary <- renderTable({
  if (input$action_button == 0)
    return()
  #withProgress(message = paste('LiDAR data processing.This may take a few seconds','The memory used is',round(mem_used()/1024^2), "Mb."), value = 0.1,detail = detail, {
- withProgress(message = 'LiDAR data processing. This may take a few minutes!', min = 0, max = 1, value = 0.1,detail = detail, {
+ withProgress(message = 'LiDAR data processing. This may take a few minutes!', min = 0, max = 1, value = 0.1,detail = "", {
+
+   isolate({
+   if (area_ha > 1000){
+    if (!any(input$tiles_list=="All")){
+     chmR <- crop(raster::mask(chmR, grid_spdf[input$tiles_list,]),grid_spdf[input$tiles_list,])
+      }
+   }
 
 
+   })
+   chmR0<-chmR
+   if (input$filtertype=="Mean") {chmR <- raster::focal(chmR, w=wf, fun=mean)}
+   if (input$filtertype=="meadian") {chmR <- raster::focal(chmR, w=wf, fun=median)}
+   if (input$filtertype=="Gaussian") {chmR <- raster::focal(chmR, w=gf)}
 
     #Sys.sleep(10)
 
@@ -440,7 +538,7 @@ output$summary <- renderTable({
     fws=15 }
   if ( input$ws=="17x17"){
     fws=17 }
-  decTREE <<- lidR::tree_detection(chmR, lidR::lmf(ws=fws))
+  decTREE <<- lidR::tree_detection(chmR0, lidR::lmf(ws=fws))
   treeMer<-cbind(as.data.frame(decTREE@coords),as.numeric(paste0(decTREE@data[,2])))
   colnames(treeMer)<-c("x","y","Height")
    tree<-subset(treeMer, treeMer$Height >=Htreshoud)
@@ -550,6 +648,8 @@ output$summary <- renderTable({
   boxplot(treelist_treetopsdf@data$CA,ylim=c(0,max(treelist_treetopsdf@data$CA)*1.3),cex.lab=2, horizontal=F, col=input$profColor,ylab="Crown Area (m2)")
    }
   },height = 360,width=850)
+
+
  isolate({
   output$downloadHist <- downloadHandler(
     filename <- function() {
@@ -713,7 +813,7 @@ output$summary <- renderTable({
                                                    "#FDE725FF"),0:255)}
 
   if ( !colS =="BlGrRed" & !colS =="Viridis") {
-  col<-brewer.pal(9,colS)
+  col<-RColorBrewer::brewer.pal(9,colS)
   col.rev<-rev(col)
   }
   tree.xy<-data.frame(tree[,1:2])
@@ -752,7 +852,7 @@ output$summary <- renderTable({
                                                      "#FDE725FF"),0:255)}
 
     if ( !colS =="BlGrRed" & !colS =="Viridis") {
-      col<-brewer.pal(9,colS)
+      col<-RColorBrewer::brewer.pal(9,colS)
       col.rev<-rev(col)
     }
     tree.xy<-data.frame(tree[,1:2])
@@ -855,25 +955,31 @@ output$summary <- renderTable({
 
      if ((input$plot3Dradio)=="plotCHM3D") {
        colS<-input$Pallet
+       myColorRamp <- function(colors, values) {
+         v <- (values - min(values))/diff(range(values))
+         x <- colorRamp(colors)(v)
+         rgb(x[,1], x[,2], x[,3], maxColorValue = 255)
+       }
 
-       if ( colS =="BlGrRed") {myPal <- c("blue","green","yellow","red")}
-       if ( colS =="Viridis") {myPal <- c("#440154FF","#482878FF","#3E4A89FF",
+       if ( colS =="BlGrRed") {myPal <- myColorRamp(c("blue","green","yellow","red"),0:255)}
+       if ( colS =="Viridis") {myPal <- myColorRamp(c("#440154FF","#482878FF","#3E4A89FF",
                                                         "#31688EFF","#26828EFF","#1F9E89FF",
                                                         "#35B779FF","#6DCD59FF","#B4DE2CFF",
-                                                        "#FDE725FF")}
+                                                        "#FDE725FF"),0:255)}
 
        if ( !colS =="BlGrRed" & !colS =="Viridis") {
-         col<-brewer.pal(9,colS)
+         col<-RColorBrewer::brewer.pal(9,colS)
          myPal<-rev(col)
        }
 
        while (rgl::rgl.cur() > 0) { try(rgl::rgl.close()) }
 
-       CHM3Dvis1<-CHM3Dvis(chm=chmR0,colR=myPal,xlab="",ylab="",zlab="Height (m)")
-       rm(CHM3Dvis1)
+       rasterVis::plot3D(chmR0,col=myPal,xlab="",ylab="",zlab="Height (m)")
+       #CHM3Dvis1<-CHM3Dvis(chm=chmR0,colR=myPal,xlab="",ylab="",zlab="Height (m)")
+       #rm(CHM3Dvis1)
        rgl::axes3d(c("x-", "y-"), col="black")
        rgl::title3d(xlab = "UTM Easting", ylab = "UTM Northing")#, col="green")
-       rgl::aspect3d(1,1,0.5)
+       #rgl::aspect3d(1,1,0.5)
        rgl::rglwidget()
 
      } else {
@@ -921,7 +1027,7 @@ output$summary <- renderTable({
            rgl::axes3d(c("x-", "y-"), col="black")
            rgl::title3d(xlab = "UTM Easting", ylab = "UTM Northing")#, col="forestgreen")
            rgl::planes3d(a=0,b=0,c=-1,d=0.0001,color="gray",alpha=0.4)
-           rgl::aspect3d(1,1,0.3)
+           #rgl::aspect3d(1,1,0.3)
            rgl::rglwidget()
          })
        }
