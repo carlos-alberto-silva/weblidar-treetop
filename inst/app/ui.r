@@ -381,10 +381,11 @@ shinyUI(navbarPage(collapsible = FALSE, inverse = T,
                         style="float: left; width: 250px;height: 260px;",
                         h4(style = "margin-top: -3px; width: 250px;",style = "margin-bottom: 10px; width: 250px;",style="text-align:center;",style="color:#003300", HTML("Carine Klauberg")),
                         div(style="text-align: center;",HTML("<a href='http://cnpq.br/'a/><img style='border-radius: 5px; width: 220px; height:220px' src='carine_Klauberg.jpg'/>"))))),
-                   #add_busy_spinner(spin = "fading-circle", position = "top-right", color = "#f37938", onstart = FALSE, height = "50px", width = "50px"),
-                   div(style="margin-right",title=h4(style="margin-right;margin-top: 10px;color:white",
+                       div(style="margin-right",title=h4(style="margin-right;margin-top: 10px;color:white",
                                                      textOutput("pageviews")))
-                    #add_busy_spinner(spin = "fading-circle", position = "top-right", color = "#f37938", onstart = FALSE, height = "50px", width = "50px")
+
+                   # from shinybusy package
+                   #add_busy_spinner(spin = "fading-circle", position = "top-right", color = "#f37938", onstart = FALSE, height = "50px", width = "50px")
 )
 )
 ################################################################################
