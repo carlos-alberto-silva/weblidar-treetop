@@ -40,7 +40,12 @@ shinyUI(navbarPage(collapsible = FALSE, inverse = T,
                    div(style="text-align:left;margin-left: +10px;margin-top: -20px; color:#444",
                        headerPanel2("","Web-LiDAR forest inventory TreeTop application"),
                        HTML("<a href='https://github.com/carlos-alberto-silva/weblidar-treetop'><img style='width: 80px;height: 80px;'
-         src='usfs1.png'/>")),#style="text-align: center;",
+         src='usfs1.png'/>"),
+                       conditionalPanel(
+                         condition="($('html').hasClass('shiny-busy'))",
+                         div(style="position: absolute; top: 8px; right: 16px; font-size: 18px",img(src="busy3.gif",width="60",height="60"))
+                       )),#style="text-align: center;",
+
 
                    tabPanel(#style="background: transparent;",
                      h4(style="text-align:center;margin-top: 10px; color:white;background: transparent;",  HTML("Application")),
@@ -376,11 +381,10 @@ shinyUI(navbarPage(collapsible = FALSE, inverse = T,
                         style="float: left; width: 250px;height: 260px;",
                         h4(style = "margin-top: -3px; width: 250px;",style = "margin-bottom: 10px; width: 250px;",style="text-align:center;",style="color:#003300", HTML("Carine Klauberg")),
                         div(style="text-align: center;",HTML("<a href='http://cnpq.br/'a/><img style='border-radius: 5px; width: 220px; height:220px' src='carine_Klauberg.jpg'/>"))))),
-
-
-
+                   #add_busy_spinner(spin = "fading-circle", position = "top-right", color = "#f37938", onstart = FALSE, height = "50px", width = "50px"),
                    div(style="margin-right",title=h4(style="margin-right;margin-top: 10px;color:white",
                                                      textOutput("pageviews")))
+                    #add_busy_spinner(spin = "fading-circle", position = "top-right", color = "#f37938", onstart = FALSE, height = "50px", width = "50px")
 )
 )
 ################################################################################
