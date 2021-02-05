@@ -15,6 +15,7 @@
 #'}
 #'@export
 launchApp<-function(...){
+  #invisible(lapply(c("shiny","RColorBrewer","spatstat","raster","rasterVis","sp","geometry","maptools","rgdal","rgl","lidR","pryr","sf","stars","rglwidget"), require, character.only = TRUE))
   appDir <- file.path(path.package("treetop", quiet=TRUE),"app")
   shiny::runApp(appDir, ...)
 }
