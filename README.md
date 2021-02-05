@@ -12,22 +12,28 @@ The treetop application provides options for i) detecting individual trees from 
 # Getting Started
 
 
-## Installation
+## Install R, Git and Rtools40
+
+i) *R (>= 3.5.0)*: https://www.r-project.org/
+
+ii) *Git*: Download and install git: https://git-scm.com/
+
+iii) *Rtools40*: https://cran.r-project.org/bin/windows/Rtools/
+
+
+## Treetop installation
 ```r
 
-## Dependencies for the treetop package
+## R package dependencies for Treetop
 
-# Git  
-Download and install git: https://git-scm.com/
-
-# Install the pacman R package
+# Install the pacman R package for managing depencencies
 install.packages("pacman")
 library(pacman)
 
 # Install and load all dependencies
 library(pacman)
 p_load(shiny, RColorBrewer, spatstat, raster, rasterVis, sp,
-       geometry, maptools, rgdal, rgl, lidR, pryr, sf, stars,rglwidget)
+       geometry, maptools, rgdal, rgl, lidR, pryr, sf, stars)
 
 
 ## Install the treetop development version:

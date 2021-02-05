@@ -40,8 +40,7 @@ Depends:
   lidR, 
   pryr, 
   sf, 
-  stars,
-  rglwidget
+  stars
 RoxygenNote: 7.1.1
 URL: https://github.com/carlos-alberto-silva/weblidar-treetop
 Copyright: inst/COPYRIGHTS
