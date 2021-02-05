@@ -35,6 +35,25 @@ headerPanel2<-function (title, windowTitle = title)
     "))), div(style = "margin-left:0px;", h1(title)))
 }
 
+checkjs <- 'function checkFileName(fieldObj) {
+    var FileName  = fieldObj.value;
+    var FileBase = FileName.split(/[\\\\/]/).pop();
+    if (! FileBase.startsWith("hello")) {
+        fieldObj.value = "";
+        alert("File does not start with hello");
+        return false;
+    }
+    return true;
+}'
+
+attrib_replace <- function(x, cond, ...) {
+  if (all(names(cond) %in% names(x)) && identical(cond, x[names(cond)])) x <- c(x, list(...))
+  if ("attribs" %in% names(x)) x$attribs <- attrib_replace(x$attribs, cond = cond, ...)
+  if ("children" %in% names(x)) x$children <- lapply(x$children, function(ch) attrib_replace(ch, cond = cond, ...))
+  x
+}
+
+
 
 shinyUI(navbarPage(collapsible = FALSE, inverse = T,
                    div(style="text-align:left;margin-left: +10px;margin-top: -20px; color:#444",
@@ -50,10 +69,13 @@ shinyUI(navbarPage(collapsible = FALSE, inverse = T,
                    tabPanel(#style="background: transparent;",
                      h4(style="text-align:center;margin-top: 10px; color:white;background: transparent;",  HTML("Application")),
                      includeCSS(file.path(appDir,"/style.css")),
-                     tags$style(type="text/css", paste0(".shiny-progress .progress-text {",
+                     tags$style(type="text/css", paste0(".shiny-progress.progress-text {",
                                                         "background-color:yellow; color:black; ",
-                                                        "position: absolute; right: 50px;border-radius: 5px;ont-size: 50px;",
+                                                        "position: absolute; right: 50px;border-radius: 5px;font-size: 50px;",
                                                         "opacity: 1; height: 50px;font-size: 15px; width: 180px;}")),
+                     tags$head(tags$style(".shiny-notification {position: fixed; top: 0px ;left: 928px;font-size: 20px;
+                                          width: 500px;height:100px;background-color:#FF8C00;color:white;border-radius: 15px;")),
+
                      div(class = "container",style="border-radius: 5px;",
                          style="border: 2px solid transparent;",style="margin-left:0px;",
                          style="margin-top:0px;",style="background: transparent;",
@@ -182,10 +204,7 @@ shinyUI(navbarPage(collapsible = FALSE, inverse = T,
 
 
                              div(style="margin-top:-15px;color:gray;",HTML("<hr />")),
-
-
-
-                             div(style="margin-left: 2px;margin-top:-15px;",
+                               div(style="margin-left: 2px;margin-top:-15px;",
                                  actionButton("action_button","Run"),
                                  div(style="margin-left:55px;margin-top: -34px;width:200px",
                                      actionButton('refresh', 'Refresh app'))

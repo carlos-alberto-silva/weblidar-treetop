@@ -163,7 +163,10 @@ GiniCoeff <- function (x, finite.sample = TRUE, na.rm = TRUE){
   return(GC)
 }
 
-
+getExtension <- function(file){
+  ex <- strsplit(basename(file), split="\\.")[[1]]
+  return(ex[-1])
+}
 ####################################
 
 output$summary <- renderTable({
@@ -198,6 +201,20 @@ output$summary <- renderTable({
  inFile<-input$chm
  if (is.null(inFile)){
  return(NULL)}
+
+ fileExt<-getExtension(inFile$name)
+
+ if (!any(fileExt==c("tif","asc","img"))){
+
+   withProgress(message = "Invalid file; Please upload a raster ('.tif', '.asc' or '.img') file!",
+                value = 1,detail = "Treetop will be refreshed!",{
+     Sys.sleep(10)
+     #return(NULL)
+     #validate("Invalid file; Please upload a raster (".tif", ".asc" or ".img") file!")
+     session$reload()
+
+   })
+  }
 
 
  chmR<-raster(inFile$datapath)
