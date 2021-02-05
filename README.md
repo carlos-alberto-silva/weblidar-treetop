@@ -23,28 +23,18 @@ iii) *Rtools40*: https://cran.r-project.org/bin/windows/Rtools/
 
 ## Treetop installation
 ```r
+# Install devtools R package
+install.packages("devtools")
 
-## R package dependencies for Treetop
-
-# Install the pacman R package for managing depencencies
-install.packages("pacman")
-library(pacman)
-
-# Install and load all dependencies
-library(pacman)
-p_load(shiny, RColorBrewer, spatstat, raster, rasterVis, sp,
-       geometry, maptools, rgdal, rgl, lidR, pryr, sf, stars)
-
-
-## Install the treetop development version:
-devtools::install_git("https://github.com/carlos-alberto-silva/weblidar-treetop", dependencies = FALSE)
+## Install Treetop R package (development version)
+devtools::install_git("https://github.com/carlos-alberto-silva/weblidar-treetop", dependencies = TRUE)
 
 ```    
 
 ## Loading and launching treetop application
 ```r
 library(treetop)
-treetop::launchApp()
+launchApp()
 
 ```
 <img src="https://github.com/carlos-alberto-silva/weblidar-treetop/blob/master/readme/weblidar_treetop_app.gif">
