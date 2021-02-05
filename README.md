@@ -16,7 +16,7 @@ The treetop application provides options for i) detecting individual trees from 
 
 i) *R (>= 3.5.0)*: https://www.r-project.org/
 
-ii) *Git*: Download and install git: https://git-scm.com/
+ii) *Git*: https://git-scm.com/
 
 iii) *Rtools40*: https://cran.r-project.org/bin/windows/Rtools/
 

@@ -236,9 +236,10 @@ output$summary <- renderTable({
    output$tiles <- renderUI({
 
      div(style="margin-left:1px;margin-top: -20px;width:245px",
-
          selectizeInput("tiles_list", label="Select tiles", choices=c("All",grid_spdf@data$id), selected = "All", multiple = TRUE,
                         options = NULL))
+
+
 
      #div(style="margin-left: 2px;margin-top:-10px;",numericInput("HTboxI", "", 1.37))
    })
@@ -322,6 +323,7 @@ output$summary <- renderTable({
 
   output$HTtype <- renderUI({
   div(style = "margin-left:2px; width:250px;margin-top:-10px; color:white",
+      tags$head(tags$style(HTML('#action_button{background-color:#78FF33}'))),
     radioButtons("HTtypeI", "Tree height threshold",list("Slide bar" = "slidebar",
       "Numeric input" = "numericbox"),inline = TRUE))
   })
@@ -483,13 +485,7 @@ output$summary <- renderTable({
   })
  })
 
-
-
-
-
-
-
-
+var=1
 
  if (input$action_button == 0)
    return()
