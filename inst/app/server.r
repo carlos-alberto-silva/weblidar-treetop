@@ -482,19 +482,21 @@ output$summary <- renderTable({
     LiDARsummary
 
    })
+
   })
  })
 
-var=1
 
  if (input$action_button == 0)
    return()
+
  #withProgress(message = paste('LiDAR data processing.This may take a few seconds','The memory used is',round(mem_used()/1024^2), "Mb."), value = 0.1,detail = detail, {
  withProgress(message = 'LiDAR data processing. This may take a few minutes!', min = 0, max = 1, value = 0.1,detail = "", {
 
+   #browser()
    isolate({
    if (area_ha > 1000){
-    if (!any(input$tiles_list=="All")){
+    if (!any(input$tiles_list=="All") & !is.null(input$tiles_list)==TRUE){
      chmR <- crop(raster::mask(chmR, grid_spdf[input$tiles_list,]),grid_spdf[input$tiles_list,])
       }
    }
