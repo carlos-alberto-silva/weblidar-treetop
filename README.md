@@ -24,12 +24,9 @@ Download and install git: https://git-scm.com/
 install.packages("pacman")
 library(pacman)
 
-# Detach all R packages
-p_unload(pacman::p_loaded(), character.only = TRUE)
-
 # Install and load all dependencies
 library(pacman)
-p_load(devtools, shiny, RColorBrewer, spatstat, raster, rasterVis, sp,
+p_load(shiny, RColorBrewer, spatstat, raster, rasterVis, sp,
        geometry, maptools, rgdal, rgl, lidR, pryr, sf, stars,rglwidget)
 
 
