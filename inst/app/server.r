@@ -165,7 +165,7 @@ GiniCoeff <- function (x, finite.sample = TRUE, na.rm = TRUE){
 
 getExtension <- function(file){
   ex <- strsplit(basename(file), split="\\.")[[1]]
-  return(ex[-1])
+  return(ex[length(ex)])
 }
 ####################################
 
@@ -195,6 +195,7 @@ output$summary <- renderTable({
   projecCHM<-raster::projection(chmR)
   detail<-""
   area_ha <- 2.5
+  #browser()
   } else {
 
 
@@ -277,66 +278,7 @@ output$summary <- renderTable({
 
 
  isolate({
-  if (input$filter==TRUE) {
-    if (input$filtertype=="Mean") {
-      if ( input$wsf=="3x3"){
-        fws=3 }
-      if ( input$wsf=="5x5"){
-        fws=5 }
-      if ( input$wsf=="7x7"){
-        fws=7 }
-      if ( input$wsf=="9x9"){
-        fws=9 }
-      if ( input$wsf=="11x11"){
-        fws=11 }
-      if ( input$wsf=="13x13"){
-        fws=13 }
-      if ( input$wsf=="15x15"){
-        fws=15 }
-      if ( input$wsf=="17x17"){
-        fws=17 }
-      wf<-matrix(c(rep(1,fws*fws)),nrow=fws,ncol=fws)
-      #chmR <- raster::focal(chmR, w=wf, fun=mean)
-    }
 
-    if (input$filtertype=="Median") {
-      if ( input$wsf=="3x3"){
-        fws=3 }
-      if ( input$wsf=="5x5"){
-        fws=5 }
-      if ( input$wsf=="7x7"){
-        fws=7 }
-      if ( input$wsf=="9x9"){
-        fws=9 }
-      if ( input$wsf=="11x11"){
-        fws=11 }
-      if ( input$wsf=="13x13"){
-        fws=13 }
-      if ( input$wsf=="15x15"){
-        fws=15 }
-      if ( input$wsf=="17x17"){
-        fws=17 }
-      wf<-matrix(c(rep(1,fws*fws)),nrow=fws,ncol=fws)
-      #chmR <- raster::focal(chmR, w=wf, fun=median)
-    }
-
-    if (input$filtertype=="Gaussian") {
-      # Gaussian filter for square cells
-      fgauss <- function(sigma, n=3) {
-        m <- matrix(nc=n, nr=n)
-        col <- rep(1:n, n)
-        row <- rep(1:n, each=n)
-        x <- col - ceiling(n/2)
-        y <- row - ceiling(n/2)
-        # according to http://en.wikipedia.org/wiki/Gaussian_filter
-        m[cbind(row, col)] <- 1/(2*pi*sigma^2) * exp(-(x^2+y^2)/(2*sigma^2))
-        # sum of weights should add up to 1
-        m / sum(m)
-      }
-      gf=fgauss(input$Sigma)
-      #chmR <- raster::focal(chmR, w=gf)
-      }
-  }
 
   output$HTtype <- renderUI({
   div(style = "margin-left:2px; width:250px;margin-top:-10px; color:white",
@@ -493,11 +435,13 @@ output$summary <- renderTable({
                   round(kurtosis(chm_hts),digits=2),
                   round(skewness(chm_hts),digits=2))
 
-    LiDARsummary<-data.frame(cbind(NameExp,MetricsExp))
-    colnames(LiDARsummary)<-c("Parameters", "Value")
+    LiDARsummary0<-data.frame(cbind(NameExp,MetricsExp))
+    colnames(LiDARsummary0)<-c("Parameters", "Value")
+    #browser()
     #Sys.sleep(1.5)
-    LiDARsummary
-
+    if(!exists("LiDARsummary")){
+      LiDARsummary0
+    }
    })
 
   })
@@ -521,9 +465,11 @@ output$summary <- renderTable({
 
    })
    chmR0<-chmR
-   if (input$filtertype=="Mean") {chmR <- raster::focal(chmR, w=wf, fun=mean)}
-   if (input$filtertype=="meadian") {chmR <- raster::focal(chmR, w=wf, fun=median)}
-   if (input$filtertype=="Gaussian") {chmR <- raster::focal(chmR, w=gf)}
+
+
+  # if (input$filtertype=="Mean") {chmR <- raster::focal(chmR, w=wf, fun=mean)}
+   #if (input$filtertype=="meadian") {chmR <- raster::focal(chmR, w=wf, fun=median)}
+  #if (input$filtertype=="Gaussian") {chmR <- raster::focal(chmR, w=gf)}
 
     #Sys.sleep(10)
 
@@ -537,23 +483,83 @@ output$summary <- renderTable({
     } else {Htreshoud<-input$HTboxI}
   })
 
-  if ( input$ws=="3x3"){
+   if (input$filter==TRUE) {
+     if (input$filtertype=="Mean") {
+       if ( input$sws=="3x3"){
+         sws=3 }
+       if ( input$sws=="5x5"){
+         sws=5 }
+       if ( input$sws=="7x7"){
+         sws=7 }
+       if ( input$sws=="9x9"){
+         sws=9 }
+       if ( input$sws=="11x11"){
+         sws=11 }
+       if ( input$sws=="13x13"){
+         sws=13 }
+       if ( input$sws=="15x15"){
+         sws=15 }
+       if ( input$sws=="17x17"){
+         sws=17 }
+       wf<-matrix(c(rep(1,sws*sws)),nrow=sws,ncol=sws)
+       chmR <- raster::focal(chmR, w=wf, fun=mean)
+     }
+
+     if (input$filtertype=="Median") {
+       if ( input$sws=="3x3"){
+         sws=3 }
+       if ( input$sws=="5x5"){
+         sws=5 }
+       if ( input$sws=="7x7"){
+         sws=7 }
+       if ( input$sws=="9x9"){
+         sws=9 }
+       if ( input$sws=="11x11"){
+         sws=11 }
+       if ( input$sws=="13x13"){
+         sws=13 }
+       if ( input$sws=="15x15"){
+         sws=15 }
+       if ( input$sws=="17x17"){
+         sws=17 }
+       wf<-matrix(c(rep(1,sws*sws)),nrow=sws,ncol=sws)
+       chmR <- raster::focal(chmR, w=wf, fun=median)
+     }
+
+     if (input$filtertype=="Gaussian") {
+       # Gaussian filter for square cells
+       fgauss <- function(sigma, n=3) {
+         m <- matrix(nc=n, nr=n)
+         col <- rep(1:n, n)
+         row <- rep(1:n, each=n)
+         x <- col - ceiling(n/2)
+         y <- row - ceiling(n/2)
+         # according to http://en.wikipedia.org/wiki/Gaussian_filter
+         m[cbind(row, col)] <- 1/(2*pi*sigma^2) * exp(-(x^2+y^2)/(2*sigma^2))
+         # sum of weights should add up to 1
+         m / sum(m)
+       }
+       gf=fgauss(input$Sigma)
+       chmR <- raster::focal(chmR, w=gf)
+     }
+   }
+  if ( input$fws=="3x3"){
     fws=3 }
-  if ( input$ws=="5x5"){
+  if ( input$fws=="5x5"){
     fws=5 }
-  if ( input$ws=="7x7"){
+  if ( input$fws=="7x7"){
     fws=7 }
-  if ( input$ws=="9x9"){
+  if ( input$fws=="9x9"){
     fws=9 }
-  if ( input$ws=="11x11"){
+  if ( input$fws=="11x11"){
       fws=11}
-  if ( input$ws=="13x13"){
+  if ( input$fws=="13x13"){
       fws=13}
-  if ( input$ws=="15x15"){
+  if ( input$fws=="15x15"){
     fws=15 }
-  if ( input$ws=="17x17"){
+  if ( input$fws=="17x17"){
     fws=17 }
-  decTREE <<- lidR::tree_detection(chmR0, lidR::lmf(ws=fws))
+  decTREE <- lidR::tree_detection(chmR, lidR::lmf(ws=fws))
   treeMer<-cbind(as.data.frame(decTREE@coords),as.numeric(paste0(decTREE@data[,2])))
   colnames(treeMer)<-c("x","y","Height")
    tree<-subset(treeMer, treeMer$Height >=Htreshoud)
@@ -608,7 +614,7 @@ output$summary <- renderTable({
    treelist_treetop<-tree
    treelist_treetopsdf<-sp::SpatialPointsDataFrame(treelist_treetop[,1:2],data=treelist_treetop)
    treelist_treetopsdf@data$treeID<-1:nrow(treelist_treetop)
-   crowns=lidR::silva2016(chmR, treelist_treetopsdf,max_cr_factor = input$maxcrown,exclusion = input$exclusion,
+   crowns=lidR::silva2016(chmR0, treelist_treetopsdf,max_cr_factor = input$maxcrown,exclusion = input$exclusion,
                           ID = "treeID")()
    contour_sf <- sf::st_as_sf(stars::st_as_stars(crowns),as_points = FALSE, merge = TRUE)
    contour<-sf::as_Spatial(contour_sf)
