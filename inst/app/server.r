@@ -1012,23 +1012,20 @@ output$summary <- renderTable({
            CBHp<-treelist_treetopsdf@data$Height*0.4
            CL<-treelist_treetopsdf@data$Height - CBHp
 
-           if (n > 150) {
+             if (input$plotSurface=="solid") { shape=2;}
+             if (input$plotSurface=="mesh") { shape=1; }
+             if (input$plotSurface=="lines") { shape=3}
 
-             if (input$plotSurface=="solid") { shape=3
-             detail2<-'Note: The maximum number of trees allowed to plot in 3D using a solid surface is 150. The trees will renderized using the line-derived surface.'}
-             if (input$plotSurface=="mesh") { shape=1; detail2<-''}
-             if (input$plotSurface=="lines") { shape=3;detail2<-''}
+           if (nrow(treelist_treetopsdf@data)>500){
 
+             detail2<-'Note: Number of trees is higher than 500. This may take several hours. It is recommended to use the line objects instead.'
            } else {
-
-             if (input$plotSurface=="solid") { shape=2;detail2<-''}
-             if (input$plotSurface=="mesh") { shape=1; detail2<-''}
-             if (input$plotSurface=="lines") { shape=3;detail2<-''}
+             detail2<-'This may take a few minutes......'
 
            }
 
            while (rgl::rgl.cur() > 0) { while (rgl::rgl.cur() > 0) { try(rgl::rgl.close()) } }
-           withProgress(message = paste('Rendering',nrow(treelist_treetopsdf@data),"trees in 3D.",detail2), value = 0.1,detail = 'This may take a few seconds......', {
+           withProgress(message = paste('Rendering',nrow(treelist_treetopsdf@data),"trees in 3D."), value = 0.1,detail = detail2, {
              Sys.sleep(10)
 
            for(i in 1:n) {
