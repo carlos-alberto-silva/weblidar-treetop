@@ -16,7 +16,7 @@
 
 ################################################################################
 # Libraries
-options(rgl.useNULL=TRUE)
+#options(rgl.useNULL=TRUE)
 options(shiny.deprecation.messages=FALSE)
 
 ################################################################################

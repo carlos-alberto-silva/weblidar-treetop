@@ -372,11 +372,14 @@ output$summary <- renderTable({
 
 
   output$hist <- renderPlot({
-      par(mfrow=c(1,2), mar=c(4.5,4,2,5))
+      par(mfrow=c(1,2), mar=c(5,5,2,1))
       dens<-density(chm_hts,adjust = 1.3, kernel = "gaussian")
       #par(mfrow=c(1,3), mar=c(5,5,2,2))
       plot(dens$y,dens$x, cex.lab=2,col="black",xlab="Density",ylab="Height (m)",type="line",lwd="1",ylim=c(0,max(chm_hts*1.3)))
       polygon(dens$y,dens$x, col=input$profColor, border="black")
+      legend("topright","CHM height distribution", bty="n", text.font=2, cex=1.5)
+      #if (!is.null(input$HTsliderI)) {abline(v=input$HTsliderI, lwd=2, col="red")}
+      #if (!is.null(input$HTboxI)) {abline(v=input$HTboxI, lwd=2, col="red")}
       boxplot(chm_hts, cex.lab=2, ylim=c(0,max(chm_hts)*1.3),horizontal=F, col=input$profColor,ylab="Height (m)")
 
   },height = 360,width=850)
@@ -423,8 +426,8 @@ output$summary <- renderTable({
   isolate ({
     output$summary2 <- renderTable({
 
-    NameExp<-c("Number of grid cells","Hmax","Hmean","Hmin","Hmedian","Hvar","Hsd","Hcv","Hkurtosis","Hskewness")
-    MetricsExp<-c(length(chm_hts),
+    NameExp<-c("Area (ha)","Hmax","Hmean","Hmin","Hmedian","Hvar","Hsd","Hcv","Hkurtosis","Hskewness")
+    MetricsExp<-c(round(area_ha,digits=2),#length(chm_hts),
                   round(max(chm_hts),digits=2),
                   round(mean(chm_hts),digits=2),
                   round(min(chm_hts),digits=2),
@@ -625,6 +628,10 @@ output$summary <- renderTable({
    colnames(contour@data)[1]<-"treeID"
    contour@data$CA<-raster::area(contour)
    contour@data$CR<-sqrt(contour@data$CA/pi)
+   #contour@data$CRT<-CL/CH
+   #contour@data$CFI<-CL/CW
+   #contour@data$CTI<-CW/CL
+   #contour@data$CSR<-CW/CH
    contour <- contour[order(contour$treeID, contour$CA, decreasing=TRUE),]
    contour <- contour[!duplicated(contour$treeID),]
    polyCrown<-merge(contour,treelist_treetopsdf@data, by="treeID")
@@ -665,6 +672,7 @@ output$summary <- renderTable({
   par(mfrow=c(1,3), mar=c(5,5,2,2))
   plot(dens$y,dens$x, cex.lab=2,col="black",xlab="Density",ylab="Height (m)",type="line",lwd="1",ylim=c(0,max(chm_hts*1.3)))
   polygon(dens$y,dens$x, col=input$profColor, border="black")
+  legend("topright","Crown-level metrics", bty="n", text.font=2, cex=1.5)
   boxplot(chm_hts, cex.lab=2, ylim=c(0,max(chm_hts)*1.3),horizontal=F, col=input$profColor,ylab="Height (m)")
   boxplot(treelist_treetopsdf@data$CA,ylim=c(0,max(treelist_treetopsdf@data$CA)*1.3),cex.lab=2, horizontal=F, col=input$profColor,ylab="Crown Area (m2)")
    }
