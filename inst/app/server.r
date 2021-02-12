@@ -110,7 +110,6 @@ shinyServer(function(input, output, session) {
     z <- z[keep]
     klj=matrix(cbind(x,y,z),ncol=3)
 
-
     if (shape==1){
 
     mMatrix<-matrix(NA,ncol=3)[-1,]
@@ -140,8 +139,9 @@ shinyServer(function(input, output, session) {
 	    }
 	NewList<-jitter(NewList,15)
 	head(NewList)
-	if (Ht<=5){col=sample(c("green3","green3","darkgreen"),nrow(NewList), TRUE)}
-	if (Ht>5){col="darkgreen"}
+	if (Ht<=2){col=rep("green",nrow(NewList))}
+	if (Ht> 2 & Ht<=5){col=sample(c("green3","green3","green"),nrow(NewList), TRUE)}
+	if (Ht>5){col=c("darkgreen")}
 
 	rgl::lines3d(NewList, col=col, add=T)
 	}
@@ -1042,8 +1042,13 @@ output$summary <- renderTable({
              vec=rbind(c(xl[i],yl[i], 0), c(xl[i], yl[i],treelist_treetopsdf@data$Height[i]))
              rgl::segments3d(vec, col=" brown",size=2)#, lwd=2)
 
+
+             if (treelist_treetopsdf@data$Height[i]<=2){crowncolor="green"}
+             if (treelist_treetopsdf@data$Height[i]> 2 & treelist_treetopsdf@data$Height[i]<=7){crowncolor="green3"}
+             if (treelist_treetopsdf@data$Height[i]>7){crowncolor="darkgreen"}
+
              ptree<-TreesModel(crownshape = input$plotShape, nz=15, nalpha=15, CL = CL[i], CR =treelist_treetopsdf@data$CR[i],
-                               HCB = CBHp[i], x0 =xl[i], y0 = yl[i], crowncolor = "forestgreen", shape=shape)
+                               HCB = CBHp[i], x0 =xl[i], y0 = yl[i], crowncolor = crowncolor, shape=shape)
 
              #browser()
              rm(ptree)
