@@ -1024,9 +1024,9 @@ output$summary <- renderTable({
              if (input$plotSurface=="mesh") { shape=1; }
              if (input$plotSurface=="lines") { shape=3}
 
-           if (nrow(treelist_treetopsdf@data)>500){
+           if (nrow(treelist_treetopsdf@data)>2000){
 
-             detail2<-'Note: Number of trees is higher than 500. This may take several hours. It is recommended to use the line objects instead.'
+             detail2<-'Note: Number of trees is higher than 2000. This may take several minutes. It is recommended to use the line objects instead.'
            } else {
              detail2<-'This may take a few minutes......'
 
