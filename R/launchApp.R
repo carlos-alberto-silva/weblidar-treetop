@@ -16,11 +16,10 @@
 #'@export
 #'@importFrom shiny runApp
 #'@importFrom RColorBrewer brewer.pal
-#'@importFrom spatstat envelope
+#'@importFrom spatstat envelope as.ppp
 #'@importFrom raster raster projection res aggregate crop area intersect
 #'@importFrom sp coordinates SpatialPointsDataFrame
 #'@importFrom geometry convhulln
-#'@importFrom maptools as.ppp
 #'@importFrom rgdal writeOGR
 #'@importFrom rgl rgl.triangles lines3d axes3d title3d rgl.cur rgl.close
 #'@importFrom lidR tree_detection silva2016
