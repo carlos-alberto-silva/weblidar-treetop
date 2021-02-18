@@ -1,6 +1,6 @@
 Package: treetop
 Type: Package
-Title: TreeTop: A Shiny-based application for Extracting Forest Information from LiDAR data for Ecologists and Conservationists
+Title: A Shiny-based Application for Extracting Forest Information from LiDAR data for Ecologists and Conservationists
 Version: 0.01
 Authors@R: c(
     person("Carlos Alberto", "Silva", email = "carlos_engflorestal@outlook.com", role = c("aut", "cre", "cph")),

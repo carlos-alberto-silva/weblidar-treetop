@@ -23,11 +23,11 @@ iii) *Rtools40*: https://cran.r-project.org/bin/windows/Rtools/
 
 ## Treetop installation
 ```r
-# Install devtools R package
-install.packages("devtools")
+# Install remotes R package
+install.packages("remotes")
 
 ## Install Treetop R package (development version)
-devtools::install_git("https://github.com/carlos-alberto-silva/weblidar-treetop", dependencies = TRUE)
+remotes::install_git("https://github.com/carlos-alberto-silva/weblidar-treetop", dependencies = TRUE)
 
 ```    
 
