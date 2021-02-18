@@ -58,7 +58,7 @@ attrib_replace <- function(x, cond, ...) {
 shinyUI(navbarPage(collapsible = FALSE, inverse = T,
                    div(style="text-align:left;margin-left: +10px;margin-top: -20px; color:#444",
                        headerPanel2("","Web-LiDAR forest inventory TreeTop application"),
-                       HTML("<a href='https://github.com/carlos-alberto-silva/weblidar-treetop'><img style='width: 80px;height: 80px;'
+                       HTML("<a href='https://www.serdp-estcp.org/'><img style='width: 80px;height: 80px;'
          src='serdp1.png'/>"),
                        conditionalPanel(
                          condition="($('html').hasClass('shiny-busy'))",
@@ -212,7 +212,7 @@ shinyUI(navbarPage(collapsible = FALSE, inverse = T,
                              div(style="margin-top:-15px;color:gray",HTML("<hr />")),
                              conditionalPanel(condition="input.filtertype!='Gaussian' & input.plot3Dradio!='plot3Dtrees'",#input.radiustype!='FR'",# & input.plot3Dradio!='plot3Dtrees'",
                                               #conditionalPanel(condition="input.radiustype=='VR'",
-                                              HTML("<a href='https://www.serdp-estcp.org/'a/><img style='width: 240px;height:60px;margin-left: 3.5px;margin-top: -15px;border-radius: 5px;border: 1px solid #999;' src='serdp.jpg'/>"))#,
+                                              HTML("'<img style='width: 240px;height:60px;margin-left: 3.5px;margin-top: -15px;border-radius: 5px;border: 1px solid #999;' src='serdp.jpg'/>"))#,
                              #div(style = "margin-top: 0px; width: 200px;height: 179px;", style="color:white", HTML("SILVA, C.A; HUDAK, A.T.; CROOKSTON, N. L.; VIERLING, L. A.; KLAUBERG, C.; and VALBUENA, R. (2019)"))
                          ),
 
