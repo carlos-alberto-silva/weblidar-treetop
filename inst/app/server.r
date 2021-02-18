@@ -632,8 +632,9 @@ output$summary <- renderTable({
    #contour@data$CFI<-CL/CW
    #contour@data$CTI<-CW/CL
    #contour@data$CSR<-CW/CH
-   contour <- contour[order(contour$treeID, contour$CA, decreasing=TRUE),]
-   contour <- contour[!duplicated(contour$treeID),]
+   #contour <- contour[order(contour$treeID, contour$CA, decreasing=TRUE),]
+   #contour <- contour[!duplicated(contour$treeID),]
+   contour<-raster::intersect(contour,treelist_treetopsdf)
    polyCrown<-merge(contour,treelist_treetopsdf@data, by="treeID")
    polyCrown@data<-polyCrown@data[,c("x","y","Height","CA","CR","treeID")]
    polyCrown<-polyCrown[!is.na(polyCrown@data$CA),]

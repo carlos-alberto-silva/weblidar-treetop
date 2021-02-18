@@ -19,6 +19,7 @@ Authors@R: c(
     person("Jason", "Vogel", email = "jvogel@ufl.edu", role = c("aut","ctb")),
     person("Gabriel", "Prata", email = "gprata@ufl.edu", role = c("aut","ctb")),
     person("Jeff", "Atkins", email = "jwatkins6@vcu.edu", role = c("aut","ctb")),
+    person("Caio", "Hamamura", email = "caiohamamura@gmail.com", role = c("aut","ctb")),
     person("Carine", "Klauberg", email = "carine_klauberg@hotmail.com", role = c("aut","ctb")))
 Maintainer: Carlos Alberto Silva <carlos_engflorestal@outlook.com>
 Description: Shiny-based application for processing and visualizing lidar data.
