@@ -26,8 +26,8 @@ shinyServer(function(input, output, session) {
 
 
   interpol<- function(input,col) {
-    surf.3d <- t(convhulln(input,options = "QJ"))
-    rgl.triangles(input[surf.3d,1],input[surf.3d,2],input[surf.3d,3],col=col,alpha = 1,
+    surf.3d <- t(geometry::convhulln(input,options = "QJ"))
+    rgl::rgl.triangles(input[surf.3d,1],input[surf.3d,2],input[surf.3d,3],col=col,alpha = 1,
                   lit = TRUE,ambient = "black",specular = "white",emission = "black",shininess = 50.0,
                   smooth = TRUE, texture = NULL,front = "fill",back ="fill", box=F,axes = FALSE)}
 
@@ -231,7 +231,7 @@ output$summary <- renderTable({
 
  exst <- extent(chmR, rowNotNA[1], rowNotNA[length(rowNotNA)],
                    colNotNA[1], colNotNA[length(colNotNA)])
- chmR<-crop(chmR,exst)
+ chmR<-raster::crop(chmR,exst)
  chmR0<-chmR
 
   }
@@ -243,7 +243,7 @@ output$summary <- renderTable({
 
  if (area_ha > 1000){
 
-   grid <- aggregate(chmR, fact=500/res(chmR))
+   grid <- raster::aggregate(chmR, fact=500/res(chmR))
    grid_spdf <- as(grid, "SpatialPolygonsDataFrame")
    grid_spdf<-grid_spdf[!is.na(grid_spdf@data[,1]),]
 
@@ -361,8 +361,8 @@ output$summary <- renderTable({
                legend.args=list(text='Height (m)', side=4, font=2, line=2.7, cex=1.5))
 
           raster::plot(grid_spdf, add=T, axes=F,border="red", lwd=2)
-          points(coordinates(grid_spdf),labels=grid_spdf$id, cex = 8, pch=16, col="gray")
-          text(coordinates(grid_spdf),labels=grid_spdf$id, cex = 1.5, col="black")
+          points(sp::coordinates(grid_spdf),labels=grid_spdf$id, cex = 8, pch=16, col="gray")
+          text(sp::coordinates(grid_spdf),labels=grid_spdf$id, cex = 1.5, col="black")
         }
     })},height = 600,width=650)
   })
@@ -461,7 +461,7 @@ output$summary <- renderTable({
    isolate({
    if (area_ha > 1000){
     if (!any(input$tiles_list=="All") & !is.null(input$tiles_list)==TRUE){
-     chmR <- crop(raster::mask(chmR, grid_spdf[input$tiles_list,]),grid_spdf[input$tiles_list,])
+     chmR <- raster::crop(raster::mask(chmR, grid_spdf[input$tiles_list,]),grid_spdf[input$tiles_list,])
       }
    }
 
@@ -602,7 +602,7 @@ output$summary <- renderTable({
     treelist_treetopsdf<-sp::SpatialPointsDataFrame(treelist_treetop[,1:2],data=treelist_treetop)
     treelist_treetopsdf@data<-treelist_treetopsdf@data[,c("x","y","Height","CA","CR","treeID")]
     polybuffs<-rgeos::gBuffer(SpatialPoints(treelist_treetop[,1:2]), width=treelist_treetop$CR*2, byid=TRUE, id=treelist_treetop$treeID)
-    polyCrown = SpatialPolygonsDataFrame(polybuffs,
+    polyCrown = sp::SpatialPolygonsDataFrame(polybuffs,
                                    data=data.frame(treelist_treetop,
                                                    row.names=sapply(slot(polybuffs, 'polygons'), function(x) slot(x, 'ID'))))
 
@@ -930,7 +930,7 @@ output$summary <- renderTable({
     }
 
     setwd(tempdir())
-    writeOGR(createShp(), dsn="TreeCrownExport.shp", layer="TreeCrownExport", driver="ESRI Shapefile")
+    rgdal::writeOGR(createShp(), dsn="TreeCrownExport.shp", layer="TreeCrownExport", driver="ESRI Shapefile")
     zip(zipfile='TreeCrownExport.zip', files=Sys.glob("TreeCrownExport.*"))
     file.copy("TreeCrownExport.zip", file)
     if (length(Sys.glob("TreeCrownExport.*"))>0){
@@ -963,7 +963,7 @@ output$summary <- renderTable({
       file.remove(Sys.glob("TreeLocationExport.*"))
     }
     setwd(tempdir())
-    writeOGR(createShpXY(), dsn="TreeLocationExport.shp",
+    rgdal::writeOGR(createShpXY(), dsn="TreeLocationExport.shp",
       layer="TreeLocationExport", driver="ESRI Shapefile")
     zip(zipfile='TreeLocationExport.zip', files=Sys.glob("TreeLocationExport.*"))
     file.copy("TreeLocationExport.zip", file)

@@ -1,7 +1,7 @@
 .onAttach <- function(lib, pkg){
-  info <- packageDescription("treetop")
+  info <- utils::packageDescription("treetop")
   if (is.null(info$Date)){info$Date= "2021-02-10 10:11:17 UTC"}
-  packageStartupMessage(
+  base::packageStartupMessage(
     paste('\n##----------------------------------------------------------------##\n',
           'treetop package, version ', info$Version, ', Released ', info$Date, '\n',
           'This package is based upon work supported by the Department of Defense ',
