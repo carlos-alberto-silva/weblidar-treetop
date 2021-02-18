@@ -22,7 +22,8 @@ Authors@R: c(
     person("Caio", "Hamamura", email = "caiohamamura@gmail.com", role = c("aut","ctb")),
     person("Carine", "Klauberg", email = "carine_klauberg@hotmail.com", role = c("aut","ctb")))
 Maintainer: Carlos Alberto Silva <carlos_engflorestal@outlook.com>
-Description: Shiny-based application for processing and visualizing lidar data.
+Description: Set of tools implemented in a shiny-based application for extracting and analysing individual 
+tree forest attributes from LiDAR data
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
