@@ -49,6 +49,10 @@ shinyServer(function(input, output, session) {
     else kurtosis(as.vector(x), na.rm = na.rm)
   }
 
+  cv<-function(x){
+    sd(x, na.rm=T)/mean(x,na.rm=T)*100
+  }
+
   skewness<-function (x, na.rm = FALSE)
   {
     if (is.matrix(x))
@@ -217,19 +221,19 @@ output$summary <- renderTable({
    })
   }
 
-
- chmR<-raster(inFile$datapath)
+ #browser()
+ chmR<-raster::raster(inFile$datapath)
  chmR[chmR[]<0]<-0
  projecCHM<-raster::projection(chmR)
  area_ha<-0
  reschmR<-raster::res(chmR)[1]
- newst<-extent(chmR)
+ newst<-raster::extent(chmR)
 
- r1NaM <- is.na(as.matrix(chmR))
+ r1NaM <- is.na(raster::as.matrix(chmR))
  colNotNA <- which(colSums(r1NaM) != nrow(chmR))
  rowNotNA <- which(rowSums(r1NaM) != ncol(chmR))
 
- exst <- extent(chmR, rowNotNA[1], rowNotNA[length(rowNotNA)],
+ exst <- raster::extent(chmR, rowNotNA[1], rowNotNA[length(rowNotNA)],
                    colNotNA[1], colNotNA[length(colNotNA)])
  chmR<-raster::crop(chmR,exst)
  chmR0<-chmR
@@ -238,12 +242,12 @@ output$summary <- renderTable({
 
 
  isolate({
- area_ha <- (ncell(chmR)*raster::res(chmR)[1]^2)/1000
+ area_ha <- (raster::ncell(chmR)*raster::res(chmR)[1]^2)/1000
 
 
  if (area_ha > 1000){
 
-   grid <- raster::aggregate(chmR, fact=500/res(chmR))
+   grid <- raster::aggregate(chmR, fact=500/raster::res(chmR))
    grid_spdf <- as(grid, "SpatialPolygonsDataFrame")
    grid_spdf<-grid_spdf[!is.na(grid_spdf@data[,1]),]
 
@@ -342,7 +346,7 @@ output$summary <- renderTable({
           raster::plot(chmR0,col=col.rev,axes = T, xlab="",ylab="",useRaster=F, legend=F)
 #browser()
           r.range <- c(min(chm_hts, na.rm=T), max(chm_hts, na.rm=T))
-          plot(chmR0, legend.only=TRUE, col=col.rev,
+          raster::plot(chmR0, legend.only=TRUE, col=col.rev,
                legend.width=1, legend.shrink=0.75,#smallplot=c(0.9,1, .3,.75),
                axis.args=list(at=seq(r.range[1], r.range[2], 2),
                               labels=seq(r.range[1], r.range[2], 2),
@@ -352,8 +356,8 @@ output$summary <- renderTable({
           raster::plot(grid_spdf, border="red", lwd=2, axes=F)
           raster::plot(chmR0,col=col.rev,axes = F, xlab="",ylab="",useRaster=F, add=T, legend=F)
           axis(1);axis(2)
-          r.range <- c(minValue(chmR0), maxValue(chmR0))
-          plot(chmR0, legend.only=TRUE, col=col.rev,
+          r.range <- c(raster::minValue(chmR0), raster::maxValue(chmR0))
+          raster::plot(chmR0, legend.only=TRUE, col=col.rev,
                legend.width=1, legend.shrink=0.75,#smallplot=c(0.9,1, .3,.75),
                axis.args=list(at=seq(r.range[1], r.range[2], 2),
                               labels=seq(r.range[1], r.range[2], 2),
@@ -434,7 +438,7 @@ output$summary <- renderTable({
                   round(median(chm_hts),digits=2),
                   round(var(chm_hts),digits=2),
                   round(sd(chm_hts),digits=2),
-                  round(mean(chm_hts)/sd(chm_hts),digits=2),
+                  round(cv(chm_hts),digits=2),
                   round(kurtosis(chm_hts),digits=2),
                   round(skewness(chm_hts),digits=2))
 
@@ -454,6 +458,7 @@ output$summary <- renderTable({
  if (input$action_button == 0)
    return()
 
+ #browser()
  #withProgress(message = paste('LiDAR data processing.This may take a few seconds','The memory used is',round(mem_used()/1024^2), "Mb."), value = 0.1,detail = detail, {
  withProgress(message = 'LiDAR data processing. This may take a few minutes!', min = 0, max = 1, value = 0.1,detail = "", {
 
@@ -601,7 +606,7 @@ output$summary <- renderTable({
     treelist_treetop$treeID<-1:nrow(treelist_treetop)
     treelist_treetopsdf<-sp::SpatialPointsDataFrame(treelist_treetop[,1:2],data=treelist_treetop)
     treelist_treetopsdf@data<-treelist_treetopsdf@data[,c("x","y","Height","CA","CR","treeID")]
-    polybuffs<-rgeos::gBuffer(SpatialPoints(treelist_treetop[,1:2]), width=treelist_treetop$CR*2, byid=TRUE, id=treelist_treetop$treeID)
+    polybuffs<-rgeos::gBuffer(sp::SpatialPoints(treelist_treetop[,1:2]), width=treelist_treetop$CR*2, byid=TRUE, id=treelist_treetop$treeID)
     polyCrown = sp::SpatialPolygonsDataFrame(polybuffs,
                                    data=data.frame(treelist_treetop,
                                                    row.names=sapply(slot(polybuffs, 'polygons'), function(x) slot(x, 'ID'))))
@@ -635,10 +640,10 @@ output$summary <- renderTable({
    #contour <- contour[order(contour$treeID, contour$CA, decreasing=TRUE),]
    #contour <- contour[!duplicated(contour$treeID),]
    contour<-raster::intersect(contour,treelist_treetopsdf)
-   polyCrown<-merge(contour,treelist_treetopsdf@data, by="treeID")
+   polyCrown<-sp::merge(contour,treelist_treetopsdf@data, by="treeID")
    polyCrown@data<-polyCrown@data[,c("x","y","Height","CA","CR","treeID")]
    polyCrown<-polyCrown[!is.na(polyCrown@data$CA),]
-   treelist_treetopsdf<-merge(treelist_treetopsdf,contour@data, by="treeID")
+   treelist_treetopsdf<-sp::merge(treelist_treetopsdf,contour@data, by="treeID")
    treelist_treetopsdf<-treelist_treetopsdf[!is.na(treelist_treetopsdf@data$CA),]
    treelist_treetopsdf@data<-treelist_treetopsdf@data[,c("x","y","Height","CA","CR","treeID")]
    treelist_treetop<-treelist_treetopsdf@data
@@ -651,8 +656,9 @@ output$summary <- renderTable({
   if ((input$plotProfile)=="plotRipley") {
     S <- treelist_treetopsdf
     sp::proj4string(S) <- projecCHM
-    SP <- as(S, "SpatialPoints")
-    P  <- as(SP, "ppp")
+    P<-maptools::as.ppp.SpatialPointsDataFrame(S)
+    #SP <- as(S, "SpatialPoints")
+    #P  <- as(SP, "ppp")
     P <- spatstat::as.ppp(sp::coordinates(S), raster::extent(S)[])
     K <- spatstat::envelope(P, spatstat::Kest, nsim = 99, verbose = F)
     L <- spatstat::envelope(P, spatstat::Lest, nsim = 99, verbose = F)
@@ -716,8 +722,9 @@ output$summary <- renderTable({
           bg = "white", res = 100)
       S <- treelist_treetopsdf
       sp::proj4string(S) <- projecCHM
-      SP <- as(S, "SpatialPoints")
-      P  <- as(SP, "ppp")
+      P<-maptools::as.ppp.SpatialPointsDataFrame(S)
+      #SP <- as(S, "SpatialPoints")
+      #P  <- as(SP, "ppp")
       P <- spatstat::as.ppp(sp::coordinates(S), raster::extent(S)[])
       K <- spatstat::envelope(P, spatstat::Kest, nsim = 99, verbose = F)
       L <- spatstat::envelope(P, spatstat::Lest, nsim = 99, verbose = F)
