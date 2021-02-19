@@ -19,7 +19,7 @@ options(warn=-1)
 
 ################################################################################
 # server.r
-options(shiny.maxRequestSize= 500*1024^2)
+options(shiny.maxRequestSize= 1000*1024^2)
 options(shiny.deprecation.messages=FALSE)
 
 shinyServer(function(input, output, session) {
