@@ -855,9 +855,9 @@ output$summary <- renderTable({
   }
   tree.xy<-data.frame(tree[,1:2])
   tree.xy <- data.frame(na.omit(tree.xy))
-  plot(chmR0,col=col.rev,axes = T, xlab="",ylab="",useRaster=F)
+  raster::plot(chmR0,col=col.rev,axes = T, xlab="",ylab="",useRaster=F)
   points(tree.xy, pch=16, cex = 1.5, col=input$TopColor,  type = "p")
-  plot(polyCrown, add=T, border=input$CrownColor, lwd=2)
+  raster::plot(polyCrown, add=T, border=input$CrownColor, lwd=2)
    }
   },height = 600,width=600)
 })
@@ -894,9 +894,9 @@ output$summary <- renderTable({
     }
     tree.xy<-data.frame(tree[,1:2])
     tree.xy <- data.frame(na.omit(tree.xy))
-    plot(chmR0,col=col.rev,axes = T, xlab="UTM Easting",ylab="UTM Northing")
+    raster::plot(chmR0,col=col.rev,axes = T, xlab="UTM Easting",ylab="UTM Northing")
     points(tree.xy, pch=16, cex = 1.5, col=input$TopColor,  type = "p")
-    plot(polyCrown, add=T, border=input$CrownColor, lwd=2)
+    raster::plot(polyCrown, add=T, border=input$CrownColor, lwd=2)
   dev.off()},
   contentType = 'image/png'
  )})

@@ -17,7 +17,7 @@
 #'@importFrom shiny runApp
 #'@importFrom RColorBrewer brewer.pal
 #'@importFrom spatstat envelope as.ppp
-#'@importFrom raster raster projection res aggregate crop area intersect ncell cv
+#'@importFrom raster raster projection res aggregate plot crop area intersect ncell cv
 #'@importFrom sp coordinates SpatialPointsDataFrame SpatialPolygonsDataFrame merge
 #'@importFrom geometry convhulln
 #'@importFrom rgdal writeOGR
