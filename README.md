@@ -49,6 +49,8 @@ R Core Team. (2021). R: A Language and Environment for Statistical Computing; R 
 
 Silva, C. A., Hudak, A. T., Vierling, L. A., Loudermilk, E. L., O’Brien, J. J., Hiers, J. K., Khosravipour, A. (2016). Imputation of Individual Longleaf Pine (Pinus palustris Mill.) Tree Attributes from Field and LiDAR Data. Canadian Journal of Remote Sensing, 42(5), 554–573. doi:10.1080/07038992.2016.1196582
 
+Roussel, J.R., Auty, D., Coops, N. C., Tompalski, P., Goodbody, T. R. H., Sánchez Meador, A., Bourdon, J.F., De Boissieu, F., Achim, A. (2020). lidR : An R package for analysis of Airborne Laser Scanning (ALS) data. Remote Sensing of Environment, 251 (August), 112061. <doi:10.1016/j.rse.2020.112061>.
+
 # Acknowledgements
 We gratefully acknowledge funding from the National Counsel of Technological and Scientific Development (CNPq) and Department of Defense Strategic Environmental Research and Development Program (SERDP), grant RC20-136 and RC-2243. 
 
