@@ -22,19 +22,13 @@ options(rgl.useNULL=TRUE)
 options(shiny.maxRequestSize= 1000*1024^2)
 options(shiny.deprecation.messages=FALSE)
 
-quiet <- function(x) {
-  sink(tempfile())
-  on.exit(sink())
-  invisible(force(x))
-}
 
-quiet(
 shinyServer(function(input, output, session) {
 
 
   oldwd <- setwd(tempdir())
   oldpar = par(no.readonly = TRUE)
-  #par(mfrow = c(1,2))
+  par(mfrow = c(1,2))
 
   interpol<- function(input,col) {
     surf.3d <- t(geometry::convhulln(input,options = "QJ"))
@@ -1189,9 +1183,9 @@ output$summary <- renderTable({
  })
 ################################################################################
 setwd(oldwd)
-#par(oldpar)
+par(oldpar)
 dev.off()
-}))
+})
 ################################################################################
 
 
