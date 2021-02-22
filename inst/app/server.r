@@ -33,7 +33,8 @@ shinyServer(function(input, output, session) {
 
 
   oldwd <- setwd(tempdir())
-  oldpar <- par(mfrow = c(1,2))
+  oldpar = par(no.readonly = TRUE)
+  par(mfrow = c(1,2))
 
   interpol<- function(input,col) {
     surf.3d <- t(geometry::convhulln(input,options = "QJ"))
@@ -321,6 +322,7 @@ output$summary <- renderTable({
   # plot CHM 2D or lorenzCurve
   isolate({
     output$CHMplot2D <- renderPlot({
+        oldpar = par(no.readonly = TRUE)
         colS<-input$Pallet
 
         if  ( area_ha > 1000){
@@ -380,7 +382,9 @@ output$summary <- renderTable({
           points(sp::coordinates(grid_spdf),labels=grid_spdf$id, cex = 8, pch=16, col="gray")
           text(sp::coordinates(grid_spdf),labels=grid_spdf$id, cex = 1.5, col="black")
         }
-    })},height = 600,width=650)
+    })
+      par(oldpar)
+    },height = 600,width=650)
   })
 
 
@@ -388,7 +392,8 @@ output$summary <- renderTable({
 
 
   output$hist <- renderPlot({
-      par(mfrow=c(1,2), mar=c(5,5,2,1))
+
+      oldpar = par(mfrow=c(1,2), mar=c(5,5,2,1))
       dens<-density(chm_hts,adjust = 1.3, kernel = "gaussian")
       #par(mfrow=c(1,3), mar=c(5,5,2,2))
       plot(dens$y,dens$x, cex.lab=2,col="transparent",xlab="Density",ylab="Height (m)",ylim=c(0,max(chm_hts*1.3)))
@@ -399,6 +404,7 @@ output$summary <- renderTable({
       #if (!is.null(input$HTboxI)) {abline(v=input$HTboxI, lwd=2, col="red")}
       boxplot(chm_hts, cex.lab=2, ylim=c(0,max(chm_hts)*1.3),horizontal=F, col=input$profColor,ylab="Height (m)")
 
+      par(oldpar)
   },height = 360,width=850)
 
 
@@ -666,6 +672,7 @@ output$summary <- renderTable({
    Sys.sleep(0.5)
 
  output$hist <- renderPlot({
+  oldpar = par(no.readonly = TRUE)
   if ((input$plotProfile)=="plotRipley") {
     S <- treelist_treetopsdf
     sp::proj4string(S) <- projecCHM
@@ -697,6 +704,7 @@ output$summary <- renderTable({
   boxplot(chm_hts, cex.lab=2, ylim=c(0,max(chm_hts)*1.3),horizontal=F, col=input$profColor,ylab="Height (m)")
   boxplot(treelist_treetopsdf@data$CA,ylim=c(0,max(treelist_treetopsdf@data$CA)*1.3),cex.lab=2, horizontal=F, col=input$profColor,ylab="Crown Area (m2)")
    }
+  par(oldpar)
   },height = 360,width=850)
 
 
@@ -708,7 +716,7 @@ output$summary <- renderTable({
       png(file, width = 800, height = 600, units = "px", pointsize = 12,
           bg = "white", res = 100)
 
-      par(mfrow=c(1,2), mar=c(4.5,4,2,5))
+      oldpar = par(mfrow=c(1,2), mar=c(4.5,4,2,5))
       chm_hts<-na.omit(chmR0[])
       isolate({
         chm_hts<-chm_hts[chm_hts>=Htreshoud]
@@ -720,7 +728,9 @@ output$summary <- renderTable({
       polygon(dens$y,dens$x, col=input$profColor, border="black")
       boxplot(chm_hts, cex.lab=2, ylim=c(0,max(chm_hts)*1.3),horizontal=F, col=input$profColor,ylab="Height (m)")
       boxplot(treelist_treetopsdf@data$CA,ylim=c(0,max(treelist_treetopsdf@data$CA)*1.3),cex.lab=2, horizontal=F, col=input$profColor,ylab="Crown Area (m2)")
-      dev.off()},
+      par(oldpar)
+      dev.off()
+      },
     contentType = 'image/png'
   )})
 
@@ -744,12 +754,15 @@ output$summary <- renderTable({
       K <- spatstat::envelope(P, spatstat::Kest, nsim = 99, verbose = F)
       L <- spatstat::envelope(P, spatstat::Lest, nsim = 99, verbose = F)
       CE<-clarkevans.test(P,nsim = 99)
-      par(mfrow = c(1, 3), mar = c(8, 5, 4, 3))
+      oldpar = par(mfrow = c(1, 3), mar = c(8, 5, 4, 3))
       plot(K, lwd=2,main="a) K",xlab = "r (m)",cex.lab=1.5)
       legend("bottomright", cex=1.2,legend=c("Clark Evans test", paste0("R=",round(CE[1][[1]],4))), bty="n")#,paste0("p-value=",round(CE[2][[1]],4))), bty="n")
       plot(L, lwd=2,main="b) L",xlab = "r (m)",cex.lab=1.5)
       plot(L, . -r ~ r, ylab=expression(hat("L")), xlab = "r (m)", main="c) L", lwd=2,cex.lab=1.5)
-            dev.off()},
+      par(oldpar)
+
+      dev.off()
+      },
     contentType = 'image/png'
   )})
 
@@ -767,7 +780,7 @@ output$summary <- renderTable({
       size <- treelist_treetopsdf@data$Height
       L.mean <-  max(cumsum(sort(size[size>=mean(size)],T)/sum(size)))
       GC <- GiniCoeff(size)
-      par(mar=c(4,4,2,2))
+      oldpar = par(mar=c(4,4,2,2))
       plot(c(0,1), c(0,1), type="l", col="grey", ylim=(0:1), xlim=c(0,1), lty=1, lwd=3,xlab="", ylab="", axes=T)
       title(ylab=expression(paste("Accummulated proportion of tree heights (", italic(H), " ; m)" )),
             xlab=expression(paste("Accummulated proportion of number of trees ")),
@@ -799,7 +812,8 @@ output$summary <- renderTable({
              bg="transparent")
       text(.5,.4, "Gini coefficient = ", pos = 4); text(.75,.4,format(GC,digits=2), pos = 4 )
       text(.5,.35, "Proportion above the mean = ", pos = 4); text(.9,.35,format(L.mean,digits=2), pos = 4 )
-       dev.off()
+      par(oldpar)
+      dev.off()
       },
     contentType = 'image/png'
   )})
@@ -815,7 +829,7 @@ output$summary <- renderTable({
     L.mean <-  max(cumsum(sort(size[size>=mean(size)],T)/sum(size)))
     GC <- GiniCoeff(size)
 
-    par(mar=c(6,4,2,2))
+    oldpar = par(mar=c(6,4,2,2))
     plot(c(0,1), c(0,1), type="l", col="grey", ylim=(0:1), xlim=c(0,1), lty=1, lwd=3,xlab="", ylab="")
     title(ylab=expression(paste("Accummulated proportion of tree heights (", italic(H), " ; m)" )),
           xlab=expression(paste("Accummulated proportion of number of trees ")),
@@ -847,6 +861,7 @@ output$summary <- renderTable({
                             bg="transparent")
     text(.5,.4, "Gini coefficient = ", pos = 4); text(.75,.4,format(GC,digits=2), pos = 4 )
     text(.5,.35, "Proportion above the mean = ", pos = 4); text(.9,.35,format(L.mean,digits=2), pos = 4 )
+    par(oldpar)
        } else {
 
   colS<-input$Pallet
@@ -951,13 +966,14 @@ output$summary <- renderTable({
       file.remove(Sys.glob("TreeCrownExport.*"))
     }
 
-    setwd(tempdir())
+    oldwd <- setwd(tempdir())
     rgdal::writeOGR(createShp(), dsn="TreeCrownExport.shp", layer="TreeCrownExport", driver="ESRI Shapefile")
     zip(zipfile='TreeCrownExport.zip', files=Sys.glob("TreeCrownExport.*"))
     file.copy("TreeCrownExport.zip", file)
     if (length(Sys.glob("TreeCrownExport.*"))>0){
       file.remove(Sys.glob("TreeCrownExport.*"))
     }
+    setwd(oldwd)
   }
  )
 
@@ -984,7 +1000,7 @@ output$summary <- renderTable({
     if (length(Sys.glob("TreeLocationExport.*"))>0){
       file.remove(Sys.glob("TreeLocationExport.*"))
     }
-    setwd(tempdir())
+    oldwd <- setwd(tempdir())
     rgdal::writeOGR(createShpXY(), dsn="TreeLocationExport.shp",
       layer="TreeLocationExport", driver="ESRI Shapefile")
     zip(zipfile='TreeLocationExport.zip', files=Sys.glob("TreeLocationExport.*"))
@@ -992,6 +1008,7 @@ output$summary <- renderTable({
     if (length(Sys.glob("TreeLocationExport.*"))>0){
       file.remove(Sys.glob("TreeLocationExport.*"))
     }
+    setwd(oldwd)
   }
  )
 
@@ -1174,6 +1191,7 @@ output$summary <- renderTable({
 ################################################################################
 setwd(oldwd)
 par(oldpar)
+dev.off()
 }))
 ################################################################################
 
