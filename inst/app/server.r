@@ -33,7 +33,7 @@ shinyServer(function(input, output, session) {
 
 
   oldwd <- setwd(tempdir())
-  #oldpar <- par()
+  oldpar <- par(mfrow = c(1,2))
 
   interpol<- function(input,col) {
     surf.3d <- t(geometry::convhulln(input,options = "QJ"))
@@ -1173,7 +1173,7 @@ output$summary <- renderTable({
  })
 ################################################################################
 setwd(oldwd)
-#par(oldpar)
+par(oldpar)
 }))
 ################################################################################
 
