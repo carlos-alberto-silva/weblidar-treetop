@@ -22,9 +22,14 @@ options(rgl.useNULL=TRUE)
 options(shiny.maxRequestSize= 1000*1024^2)
 options(shiny.deprecation.messages=FALSE)
 
+quiet <- function(x) {
+  sink(tempfile())
+  on.exit(sink())
+  invisible(force(x))
+}
 
+quiet(
 shinyServer(function(input, output, session) {
-
 
   oldwd <- setwd(tempdir())
   oldpar = par(no.readonly = TRUE)
@@ -580,7 +585,7 @@ output$summary <- renderTable({
     fws=15 }
   if ( input$fws=="17x17"){
     fws=17 }
-  decTREE <- lidR::tree_detection(chmR, lidR::lmf(ws=fws))
+  decTREE <- lidR::find_trees(chmR, lidR::lmf(ws=fws))
   treeMer<-cbind(as.data.frame(decTREE@coords),as.numeric(paste0(decTREE@data[,2])))
   colnames(treeMer)<-c("x","y","Height")
    tree<-subset(treeMer, treeMer$Height >=Htreshoud)
@@ -1185,7 +1190,8 @@ output$summary <- renderTable({
 setwd(oldwd)
 par(oldpar)
 dev.off()
-})
+ })
+)
 ################################################################################
 
 
