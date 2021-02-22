@@ -34,7 +34,7 @@ shinyServer(function(input, output, session) {
 
   oldwd <- setwd(tempdir())
   oldpar = par(no.readonly = TRUE)
-  par(mfrow = c(1,2))
+  #par(mfrow = c(1,2))
 
   interpol<- function(input,col) {
     surf.3d <- t(geometry::convhulln(input,options = "QJ"))
@@ -908,7 +908,6 @@ output$summary <- renderTable({
     myColorRamp <- function(colors, values) {
       v <- (values - min(values))/diff(range(values))
       x <- colorRamp(colors)(v)
-      head(x)
       rgb(x[,1], x[,2], x[,3], maxColorValue = 255)
     }
 
@@ -1190,7 +1189,7 @@ output$summary <- renderTable({
  })
 ################################################################################
 setwd(oldwd)
-par(oldpar)
+#par(oldpar)
 dev.off()
 }))
 ################################################################################
