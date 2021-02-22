@@ -9,8 +9,14 @@ launchApp(...)
 \arguments{
 \item{...}{additional parameters from the \code{\link[shiny:runApp]{runApp}} function.}
 }
+\value{
+This function does not return.
+}
 \description{
-This function launch the treetop application
+This function launch the treetop application.
+}
+\details{
+The treetop GUI will pop up for LiDAR data visualization, processing and analysis. Import a LiDAR-derived Canopy Height Model (CHM) for custom data processing. Interrupt R to stop the application (usually by pressing Ctrl+C or Esc).
 }
 \examples{
 \dontrun{

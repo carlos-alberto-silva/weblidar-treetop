@@ -12,7 +12,7 @@
 # Libraries
 options(rgl.useNULL=TRUE)
 # warning messages off
-options(warn=-1)
+#options(warn=-1)
 
 
 ################################################################################
@@ -22,8 +22,18 @@ options(warn=-1)
 options(shiny.maxRequestSize= 1000*1024^2)
 options(shiny.deprecation.messages=FALSE)
 
+quiet <- function(x) {
+  sink(tempfile())
+  on.exit(sink())
+  invisible(force(x))
+}
+
+quiet(
 shinyServer(function(input, output, session) {
 
+
+  oldwd <- setwd(tempdir())
+  #oldpar <- par()
 
   interpol<- function(input,col) {
     surf.3d <- t(geometry::convhulln(input,options = "QJ"))
@@ -96,6 +106,8 @@ shinyServer(function(input, output, session) {
       angs <- rep(seq(0,2*pi, length=nalpha),nz)
     }
 
+    if (min(z)<0){ z<-z+sqrt(min(z)^2)}
+    z<-z/max(z)
 
     if(crownshape == "cone")distfun <- (1-z)
     if(crownshape == "ellipsoid")distfun <- sqrt(1 - ((z-1/2)^2)/((1/2)^2))
@@ -178,7 +190,7 @@ output$summary <- renderTable({
   observeEvent(input$refresh, {
     if (input$refresh==1){
       session$reload()
-      rm(list=ls())
+      #rm(list=ls())
   }
     })
 
@@ -379,7 +391,8 @@ output$summary <- renderTable({
       par(mfrow=c(1,2), mar=c(5,5,2,1))
       dens<-density(chm_hts,adjust = 1.3, kernel = "gaussian")
       #par(mfrow=c(1,3), mar=c(5,5,2,2))
-      plot(dens$y,dens$x, cex.lab=2,col="black",xlab="Density",ylab="Height (m)",type="line",lwd="1",ylim=c(0,max(chm_hts*1.3)))
+      plot(dens$y,dens$x, cex.lab=2,col="transparent",xlab="Density",ylab="Height (m)",ylim=c(0,max(chm_hts*1.3)))
+      lines(dens$y,dens$x,col="black",lwd=1)
       polygon(dens$y,dens$x, col=input$profColor, border="black")
       legend("topright","CHM height distribution", bty="n", text.font=2, cex=1.5)
       #if (!is.null(input$HTsliderI)) {abline(v=input$HTsliderI, lwd=2, col="red")}
@@ -629,7 +642,7 @@ output$summary <- renderTable({
 
 
    #contour = raster::rasterToPolygons(crowns, dissolve = TRUE)
-   rm(crowns)
+   #rm(crowns)
    colnames(contour@data)[1]<-"treeID"
    contour@data$CA<-raster::area(contour)
    contour@data$CR<-sqrt(contour@data$CA/pi)
@@ -677,7 +690,8 @@ output$summary <- renderTable({
   })
   dens<-density(chm_hts,adjust = 1.3, kernel = "gaussian")
   par(mfrow=c(1,3), mar=c(5,5,2,2))
-  plot(dens$y,dens$x, cex.lab=2,col="black",xlab="Density",ylab="Height (m)",type="line",lwd="1",ylim=c(0,max(chm_hts*1.3)))
+  plot(dens$y,dens$x, cex.lab=2,col="transparent",xlab="Density",ylab="Height (m)",ylim=c(0,max(chm_hts*1.3)))
+  lines(dens$y,dens$x,col="black",lwd=1)
   polygon(dens$y,dens$x, col=input$profColor, border="black")
   legend("topright","Crown-level metrics", bty="n", text.font=2, cex=1.5)
   boxplot(chm_hts, cex.lab=2, ylim=c(0,max(chm_hts)*1.3),horizontal=F, col=input$profColor,ylab="Height (m)")
@@ -701,7 +715,8 @@ output$summary <- renderTable({
       })
       dens<-density(chm_hts,adjust = 1.3, kernel = "gaussian")
       par(mfrow=c(1,3), mar=c(5,5,2,2))
-      plot(dens$y,dens$x, cex.lab=2,col="black",xlab="Density",ylab="Height (m)",type="line",lwd="1",ylim=c(0,max(chm_hts*1.3)))
+      plot(dens$y,dens$x, cex.lab=2,col="transparent",xlab="Density",ylab="Height (m)",ylim=c(0,max(chm_hts*1.3)))
+      lines(dens$y,dens$x,col="black",lwd=1)
       polygon(dens$y,dens$x, col=input$profColor, border="black")
       boxplot(chm_hts, cex.lab=2, ylim=c(0,max(chm_hts)*1.3),horizontal=F, col=input$profColor,ylab="Height (m)")
       boxplot(treelist_treetopsdf@data$CA,ylim=c(0,max(treelist_treetopsdf@data$CA)*1.3),cex.lab=2, horizontal=F, col=input$profColor,ylab="Crown Area (m2)")
@@ -1055,11 +1070,12 @@ output$summary <- renderTable({
              if (treelist_treetopsdf@data$Height[i]> 2 & treelist_treetopsdf@data$Height[i]<=7){crowncolor="green3"}
              if (treelist_treetopsdf@data$Height[i]>7){crowncolor="darkgreen"}
 
+
              ptree<-TreesModel(crownshape = input$plotShape, nz=15, nalpha=15, CL = CL[i], CR =treelist_treetopsdf@data$CR[i],
                                HCB = CBHp[i], x0 =xl[i], y0 = yl[i], crowncolor = crowncolor, shape=shape)
 
              #browser()
-             rm(ptree)
+             #rm(ptree)
              incProgress(0.1, detail = paste("Ploting tree n:", i))
 
            }
@@ -1156,7 +1172,9 @@ output$summary <- renderTable({
 
  })
 ################################################################################
-
-})
-
+setwd(oldwd)
+#par(oldpar)
+}))
 ################################################################################
+
+

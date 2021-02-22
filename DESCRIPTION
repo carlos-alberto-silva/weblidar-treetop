@@ -1,6 +1,6 @@
 Package: treetop
 Type: Package
-Title: A Shiny-Based Application for Extracting Forest Information from LiDAR Data for Ecologists and Conservationists
+Title: A Shiny-Based Application for Extracting Forest Information from LiDAR Data
 Version: 0.0.1
 Authors@R: c(
     person("Carlos Alberto", "Silva", email = "carlos_engflorestal@outlook.com", role = c("aut", "cre", "cph")),
@@ -22,10 +22,11 @@ Authors@R: c(
     person("Caio", "Hamamura", email = "caiohamamura@gmail.com", role = c("aut","ctb")),
     person("Carine", "Klauberg", email = "carine_klauberg@hotmail.com", role = c("aut","ctb")))
 Maintainer: Carlos Alberto Silva <carlos_engflorestal@outlook.com>
-Description: Set of tools implemented into a shiny-based application for extracting and analyzing individual tree forest attributes from LiDAR data.
+Description: Set of tools implemented into a shiny-based application for extracting and analyzing individual tree forest attributes from LiDAR (Light Detection and Ranging) data. Silva, C. A., Hudak, A. T., Vierling, L. A., Loudermilk, E. L., O’Brien, J. J., Hiers, J. K., Khosravipour, A. (2016). Imputation of Individual Longleaf Pine (Pinus palustris Mill.) Tree Attributes from Field and LiDAR Data. Canadian Journal of Remote Sensing, 42(5), 554–573.<doi:10.1080/07038992.2016.1196582>.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
+BugReports: https://github.com/carlos-alberto-silva/weblidar-treetop/issues
 Depends:
   R (>= 3.5.0)
 Imports:

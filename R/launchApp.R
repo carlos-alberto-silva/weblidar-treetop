@@ -1,10 +1,12 @@
 #'Launch treetop application
 #
-#'@description This function launch the treetop application
+#'@description This function launch the treetop application.
 #'
 #'@usage launchApp(...)
 #'
 #'@param ... additional parameters from the \code{\link[shiny:runApp]{runApp}} function.
+#'@return This function does not return.
+#'@details The treetop GUI will pop up for LiDAR data visualization, processing and analysis. Import a LiDAR-derived Canopy Height Model (CHM) for custom data processing. Interrupt R to stop the application (usually by pressing Ctrl+C or Esc).
 #'
 #'@examples
 #'\dontrun{
