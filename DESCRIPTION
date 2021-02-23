@@ -31,7 +31,8 @@ Depends:
 Imports:
   shiny,
   RColorBrewer,
-  spatstat,
+  spatstat.geom,
+  spatstat.core,
   raster,
   rasterVis,
   sp,
