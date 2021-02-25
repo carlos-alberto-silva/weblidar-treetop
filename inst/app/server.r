@@ -675,7 +675,14 @@ output$summary <- renderTable({
   if ((input$plotProfile)=="plotRipley") {
     S <- treelist_treetopsdf
     sp::proj4string(S) <- projecCHM
-    P<-maptools::as.ppp.SpatialPointsDataFrame(S)
+    bb <- bbox(S)
+    colnames(bb) <- NULL
+    W  <- spatstat.geom::owin(bb[1,], bb[2,])
+    nc <- ncol(S)
+    marks <- if(nc == 0) NULL else slot(S, "data")
+    cc <- sp::coordinates(S)
+    #P<-maptools::as.ppp.SpatialPointsDataFrame(S)
+    P<-spatstat.geom::ppp(cc[,1], cc[,2], window = W, marks = marks, check=FALSE)
     #SP <- as(S, "SpatialPoints")
     #P  <- as(SP, "ppp")
     P <- spatstat.geom::as.ppp(sp::coordinates(S), raster::extent(S)[])
@@ -746,7 +753,14 @@ output$summary <- renderTable({
           bg = "white", res = 100)
       S <- treelist_treetopsdf
       sp::proj4string(S) <- projecCHM
-      P<-maptools::as.ppp.SpatialPointsDataFrame(S)
+      bb <- bbox(S)
+      colnames(bb) <- NULL
+      W  <- spatstat.geom::owin(bb[1,], bb[2,])
+      nc <- ncol(S)
+      marks <- if(nc == 0) NULL else slot(S, "data")
+      cc <- sp::coordinates(S)
+      #P<-maptools::as.ppp.SpatialPointsDataFrame(S)
+      P<-spatstat.geom::ppp(cc[,1], cc[,2], window = W, marks = marks, check=FALSE)
       #SP <- as(S, "SpatialPoints")
       #P  <- as(SP, "ppp")
       P <- spatstat.geom::as.ppp(sp::coordinates(S), raster::extent(S)[])
