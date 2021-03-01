@@ -18,10 +18,10 @@
 #'\doi{10.3390/rs12213599}
 #'
 #'Roussel, J.R., Auty, D., Coops, N. C., Tompalski, P., Goodbody, T. R. H., Sánchez Meador, A., Bourdon, J.F., De Boissieu, F., Achim, A. (2020). lidR : An R package for analysis of Airborne Laser Scanning (ALS) data.
-#'Remote Sensing of Environment, 251, 112061.\doi{10.1016/j.rse.2020.112061}
+#'Remote Sensing of Environment, 251, 112061. \doi{10.1016/j.rse.2020.112061}
 #'
 #'Silva, C. A., Hudak, A. T., Vierling, L. A., Loudermilk, E. L., O’Brien, J. J., Hiers, J. K., Khosravipour, A. (2016). Imputation of Individual Longleaf Pine (Pinus palustris Mill.) Tree Attributes from Field and LiDAR Data. Canadian Journal of Remote Sensing, 42(5), 554–573.
-#'\doi{10.1080/07038992.2016.1196582}
+#'\href{https://doi.org/10.1080/07038992.2016.1196582}{https://doi.org/10.1080/07038992.2016.1196582}
 #'
 #'@examples
 #'\dontrun{
