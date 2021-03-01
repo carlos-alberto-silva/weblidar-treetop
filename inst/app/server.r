@@ -675,7 +675,7 @@ output$summary <- renderTable({
   if ((input$plotProfile)=="plotRipley") {
     S <- treelist_treetopsdf
     sp::proj4string(S) <- projecCHM
-    bb <- bbox(S)
+    bb <- sp::bbox(S)
     colnames(bb) <- NULL
     W  <- spatstat.geom::owin(bb[1,], bb[2,])
     nc <- ncol(S)
@@ -753,7 +753,7 @@ output$summary <- renderTable({
           bg = "white", res = 100)
       S <- treelist_treetopsdf
       sp::proj4string(S) <- projecCHM
-      bb <- bbox(S)
+      bb <- sp::bbox(S)
       colnames(bb) <- NULL
       W  <- spatstat.geom::owin(bb[1,], bb[2,])
       nc <- ncol(S)
