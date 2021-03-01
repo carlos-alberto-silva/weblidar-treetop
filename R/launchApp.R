@@ -21,7 +21,7 @@
 #'Remote Sensing of Environment, 251, 112061. \doi{10.1016/j.rse.2020.112061}
 #'
 #'Silva, C. A., Hudak, A. T., Vierling, L. A., Loudermilk, E. L., O’Brien, J. J., Hiers, J. K., Khosravipour, A. (2016). Imputation of Individual Longleaf Pine (Pinus palustris Mill.) Tree Attributes from Field and LiDAR Data. Canadian Journal of Remote Sensing, 42(5), 554–573.
-#'\doi{doi.org/10.1080/07038992.2016.1196582}
+#'\doi{10.1080/07038992.2016.1196582}
 #'
 #'@examples
 #'\dontrun{
