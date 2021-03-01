@@ -5,7 +5,7 @@ Version: 0.0.1
 Authors@R: c(
     person("Carlos Alberto", "Silva", email = "carlos_engflorestal@outlook.com", role = c("aut", "cre", "cph")),
     person("Andrew", "Hudak", email = "andrew.hudak@usda.gov", role = "aut"),
-    person("Lee", "Vierling", email = "leev@uidaho.edu", role = role = "aut"),
+    person("Lee", "Vierling", email = "leev@uidaho.edu", role = "aut"),
     person("Ruben", "Valbuena", email = "r.valbuena@bangor.ac.uk", role = "aut"),
     person("Adrian", "Cardil", email = "adriancardil@gmail.com", role = "aut"),
     person("Midhun", "Mohan", email = "mid_mohan@berkeley.edu", role = "aut"),
