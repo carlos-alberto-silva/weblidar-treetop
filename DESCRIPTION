@@ -4,24 +4,23 @@ Title: A Shiny-Based Application for Extracting Forest Information from LiDAR Da
 Version: 0.0.1
 Authors@R: c(
     person("Carlos Alberto", "Silva", email = "carlos_engflorestal@outlook.com", role = c("aut", "cre", "cph")),
-    person("Andrew", "Hudak", email = "andrew.hudak@usda.gov", role = c("aut", "cph")),
-    person("Lee", "Vierling", email = "leev@uidaho.edu", role = c("aut","ctb")),
-    person("Ruben", "Valbuena", email = "r.valbuena@bangor.ac.uk", role = c("aut","ctb")),
-    person("Adrian", "Cardil", email = "adriancardil@gmail.com", role = c("aut","ctb")),
-    person("Midhun", "Mohan", email = "mid_mohan@berkeley.edu", role = c("aut","ctb")),
-    person("Danilo Roberti Alves de", "Almeida", email = "daniloflorestas@gmail.com", role = c("aut","ctb")),
-    person("Eben North", "Broadbent", email = "eben@ufl.edu", role = c("aut","ctb")),
-    person("Angelica", "Zambrano", email = "aalmeyda@ufl.edu", role = c("aut","ctb")),
-    person("Ben", "Wilkinson", email = "benew@ufl.edu", role = c("aut","ctb")),
-    person("Ajay", "Sharma", email = "ajay.sharma@ufl.edu", role = c("aut","ctb")),
-    person("Jason", "Drake", email = "jason.drake@famu.edu", role = c("aut","ctb")),
-    person("Paul", "Medley", email = "paul.medley@famu.edu", role = c("aut","ctb")),
-    person("Jason", "Vogel", email = "jvogel@ufl.edu", role = c("aut","ctb")),
-    person("Gabriel", "Prata", email = "gprata@ufl.edu", role = c("aut","ctb")),
-    person("Jeff", "Atkins", email = "jwatkins6@vcu.edu", role = c("aut","ctb")),
-    person("Caio", "Hamamura", email = "caiohamamura@gmail.com", role = c("aut","ctb")),
-    person("Carine", "Klauberg", email = "carine_klauberg@hotmail.com", role = c("aut","ctb")))
-Maintainer: Carlos Alberto Silva <carlos_engflorestal@outlook.com>
+    person("Andrew", "Hudak", email = "andrew.hudak@usda.gov", role = "aut"),
+    person("Lee", "Vierling", email = "leev@uidaho.edu", role = role = "aut"),
+    person("Ruben", "Valbuena", email = "r.valbuena@bangor.ac.uk", role = "aut"),
+    person("Adrian", "Cardil", email = "adriancardil@gmail.com", role = "aut"),
+    person("Midhun", "Mohan", email = "mid_mohan@berkeley.edu", role = "aut"),
+    person("Danilo Roberti Alves de", "Almeida", email = "daniloflorestas@gmail.com", role = "aut"),
+    person("Eben North", "Broadbent", email = "eben@ufl.edu", role = "aut"),
+    person("Angelica", "Zambrano", email = "aalmeyda@ufl.edu", role = "aut"),
+    person("Ben", "Wilkinson", email = "benew@ufl.edu", role = "aut"),
+    person("Ajay", "Sharma", email = "ajay.sharma@ufl.edu", role = "aut"),
+    person("Jason", "Drake", email = "jason.drake@famu.edu", role = "aut"),
+    person("Paul", "Medley", email = "paul.medley@famu.edu", role = "aut"),
+    person("Jason", "Vogel", email = "jvogel@ufl.edu", role = "aut"),
+    person("Gabriel", "Prata", email = "gprata@ufl.edu", role = "aut"),
+    person("Jeff", "Atkins", email = "jwatkins6@vcu.edu", role = "aut"),
+    person("Caio", "Hamamura", email = "caiohamamura@gmail.com", role = "aut"),
+    person("Carine", "Klauberg", email = "carine_klauberg@hotmail.com", role = "aut"))
 Description: Set of tools implemented into a shiny-based application for extracting and analyzing individual tree forest attributes from LiDAR (Light Detection and Ranging) data.
 License: GPL-3
 Encoding: UTF-8
