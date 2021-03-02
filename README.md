@@ -3,7 +3,7 @@
 ![Github](https://img.shields.io/badge/Github-0.0.1-green.svg)
 ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) 
 
-**Treetop: A Shiny-based Application for Extracting Forest Information from LiDAR data for Ecologists and Conservationists.**
+**Treetop: A Shiny-based Application for Extracting Forest Information from LiDAR data.**
 
 Authors: Carlos Alberto Silva, Andrew T. Hudak, Lee A. Vierling,  Ruben Valbuena, Adrian Cardil, Midhun Mohan, Danilo Roberti Alves de Almeida, Eben N. Broadbent, Angelica M. Almeyda Zambrano, Ben Wilkinson, Ajay Sharma, Jason B. Drake, Paul B. Medley, Jason G. Vogel, Gabriel Atticciati Prata, Jeff Atkins, Caio Hamamura, Carine Klauberg.   
 
@@ -52,13 +52,13 @@ Silva, C. A., Hudak, A. T., Vierling, L. A., Loudermilk, E. L., O’Brien, J. J.
 Roussel, J.R., Auty, D., Coops, N. C., Tompalski, P., Goodbody, T. R. H., Sánchez Meador, A., Bourdon, J.F., De Boissieu, F., Achim, A. (2020). lidR : An R package for analysis of Airborne Laser Scanning (ALS) data. Remote Sensing of Environment, 251 (August), 112061. <doi:10.1016/j.rse.2020.112061>.
 
 # Acknowledgements
-We gratefully acknowledge funding from the National Counsel of Technological and Scientific Development (CNPq) and Department of Defense Strategic Environmental Research and Development Program (SERDP), grant RC20-136 and RC-2243. 
+We gratefully acknowledge funding from the National Counsel of Technological and Scientific Development (CNPq) and Department of Defense Strategic Environmental Research and Development Program (SERDP), grant RC-2243, RC19-1064 and RC20-1346. 
 
 # Reporting Issues 
 Please report any issue regarding the Treetop app to Dr. *Carlos A. Silva* (carlos_engflorestal@outlook.com)
 
 # Citing treetop application
-Silva et al. 2021. TreeTop: A Shiny-based Application for Extracting Forest Information from LiDAR data for Ecologists and Conservationists. *Methods in Ecology and Evolution (In Review).*
+Silva et al. 2021. TreeTop: A Shiny-based Application for Extracting Forest Information from LiDAR data for Ecologists and Conservationists. *Methods in Ecology and Evolution (In prep).*
 
 # Disclaimer
 **Treetop has been developed using the *Shiny* (Chang et al. 2021) package in R (R Core Team 2021). It comes with no guarantee, expressed or implied, and the authors hold no responsibility for its use or reliability of its outputs.**
