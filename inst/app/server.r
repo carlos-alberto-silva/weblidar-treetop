@@ -378,7 +378,7 @@ output$summary <- renderTable({
                legend.args=list(text='Height (m)', side=4, font=2, line=2.7, cex=1.5))
 
           raster::plot(grid_spdf, add=T, axes=F,border="red", lwd=2)
-          points(sp::coordinates(grid_spdf),labels=grid_spdf$id, cex = 8, pch=16, col="gray")
+          points(sp::coordinates(grid_spdf), cex = 8, pch=16, col="gray")
           text(sp::coordinates(grid_spdf),labels=grid_spdf$id, cex = 1.5, col="black")
         }
     })
