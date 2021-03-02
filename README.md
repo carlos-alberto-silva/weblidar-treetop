@@ -1,7 +1,10 @@
 ![](https://github.com/carlos-alberto-silva/weblidar-treetop/blob/master/readme/wiki_page.png)<br/>
 
+[![CRAN](https://www.r-pkg.org/badges/version/treetop)](https://cran.r-project.org/package=treetop)
 ![Github](https://img.shields.io/badge/Github-0.0.1-green.svg)
 ![licence](https://img.shields.io/badge/Licence-GPL--3-blue.svg) 
+![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/treetop)
+
 
 **Treetop: A Shiny-based Application for Extracting Forest Information from LiDAR data.**
 
@@ -23,11 +26,13 @@ iii) *Rtools40*: https://cran.r-project.org/bin/windows/Rtools/
 
 ## Treetop installation
 ```r
-# Install remotes R package
-install.packages("remotes")
+# The CRAN version:
+install.packages("rGEDI")
 
-## Install Treetop R package (development version)
-remotes::install_git("https://github.com/carlos-alberto-silva/weblidar-treetop", dependencies = TRUE)
+# The development version:
+#install.packages("remotes")
+library(remotes)
+install_git("https://github.com/carlos-alberto-silva/weblidar-treetop", dependencies = TRUE)
 
 ```    
 
