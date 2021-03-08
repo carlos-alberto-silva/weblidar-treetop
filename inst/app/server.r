@@ -254,7 +254,7 @@ output$summary <- renderTable({
 
 
  isolate({
- area_ha <- (raster::ncell(chmR)*raster::res(chmR)[1]^2)/1000
+ area_ha <- (raster::ncell(chmR)*raster::res(chmR)[1]^2)/10000
 
 
  if (area_ha > 1000){
