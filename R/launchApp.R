@@ -43,7 +43,7 @@
 #'@importFrom lidR tree_detection silva2016
 #'@import pryr
 #'@importFrom stars st_as_stars
-#'@importFrom rglwidget rglwidget
+#'@importFrom rgl rglwidget
 #'@importFrom rasterVis plot3D
 #'@importFrom sf st_as_sf as_Spatial
 launchApp<-function(...){
