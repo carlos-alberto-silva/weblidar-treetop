@@ -32,7 +32,7 @@ install.packages("treetop")
 # The development version:
 #install.packages("remotes")
 library(remotes)
-install_git("https://github.com/carlos-alberto-silva/weblidar-treetop", dependencies = TRUE)
+install_github("https://github.com/carlos-alberto-silva/weblidar-treetop", dependencies = TRUE)
 
 ```    
 
