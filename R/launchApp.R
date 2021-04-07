@@ -35,11 +35,11 @@
 #'@importFrom RColorBrewer brewer.pal
 #'@importFrom spatstat.geom as.ppp
 #'@importFrom spatstat.core envelope Kest Lest clarkevans.test
-#'@importFrom raster raster projection res aggregate plot crop area intersect ncell cv
+#'@importFrom raster raster projection res aggregate plot crop area intersect ncell cv # the app still requires prior library(raster), so not all dependencies fixed yet. Couldn't just add the whole raster?
 #'@importFrom sp coordinates SpatialPointsDataFrame SpatialPolygonsDataFrame merge
 #'@importFrom geometry convhulln
 #'@importFrom rgdal writeOGR
-#'@importFrom rgl rgl.triangles lines3d axes3d title3d rgl.cur rgl.close
+#'@importFrom rgl rgl.triangles lines3d axes3d title3d rgl.cur rgl.close # the app still requires prior library(rgl), so not all dependencies fixed yet. Couldn't just add the whole rgl?
 #'@importFrom lidR tree_detection silva2016
 #'@import pryr
 #'@importFrom stars st_as_stars
