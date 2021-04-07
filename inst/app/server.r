@@ -587,9 +587,9 @@ output$summary <- renderTable({
     fws=17 }
   decTREE <- lidR::find_trees(chmR, lidR::lmf(ws=fws))
   treeMer<-cbind(as.data.frame(decTREE@coords),as.numeric(paste0(decTREE@data[,2])))
-  colnames(treeMer)<-c("x","y","Height")
+  colnames(treeMer)<-c("x","y","Height") # could crown width and crown area by added here somehow?
    tree<-subset(treeMer, treeMer$Height >=Htreshoud)
-  colnames(tree)<-c("x","y","Height")
+  colnames(tree)<-c("x","y","Height") # could crown width and crown area by added here somehow?
   #if(exists("decTREE")){rm(decTREE)}
  })
 
