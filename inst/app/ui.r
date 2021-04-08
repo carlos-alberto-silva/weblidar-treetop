@@ -262,7 +262,7 @@ shinyUI(navbarPage(collapsible = FALSE, inverse = T,
                                  h4(style = "margin-top: 0px; width: 673px; ",
                                     style="text-align: center;",style="color:#003300",
                                     HTML("Canopy Height Model and 3D trees")),
-                                 rglwidget::rglwidgetOutput("PLOT3D",width = "650px", height = "550px"),
+                                 rgl::rglwidgetOutput("PLOT3D",width = "650px", height = "550px"),
                                  uiOutput("downloadShpR"),
                                  uiOutput("downloadShpRXY"),
                                  uiOutput("TreelistR"))
