@@ -962,7 +962,7 @@ output$summary <- renderTable({
     return(NULL)
   } else {
     SHP<-polyCrown
-    raster::proj4string(SHP) <- projecCHM
+    proj4string(SHP) <- projecCHM
     return(SHP)
   }
  })
@@ -1000,7 +1000,7 @@ output$summary <- renderTable({
   if (is.null(treelist_treetopsdf@data)){
     return(NULL)
   } else {
-   raster::proj4string(treelist_treetopsdf) <- projecCHM
+   proj4string(treelist_treetopsdf) <- projecCHM
     return(treelist_treetopsdf)
   }
  })
