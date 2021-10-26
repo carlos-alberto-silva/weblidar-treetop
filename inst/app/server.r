@@ -206,9 +206,9 @@ output$summary <- renderTable({
   if ((input$Mydata)=="ED") {
 
   chmR<- raster::raster(system.file('extdata', 'Eglin_plot1.asc', package='treetop'))
-
+  quiet(projection(chmR)<-CRS('+init=EPSG:3724'))
   chmR0<-chmR
-  projecCHM<-raster::projection(chmR)
+  quiet(projecCHM<-raster::projection(chmR))
   detail<-""
   area_ha <- 2.5
   #browser()
@@ -236,7 +236,10 @@ output$summary <- renderTable({
  #browser()
  chmR<-raster::raster(inFile$datapath)
  chmR[chmR[]<0]<-0
- projecCHM<-raster::projection(chmR)
+ quiet(projecCHM<-raster::projection(chmR))
+
+ if (is.na(projecCHM)){ rojecCHM<-CRS('+init=EPSG:3724')}
+
  area_ha<-0
  reschmR<-raster::res(chmR)[1]
  newst<-raster::extent(chmR)
