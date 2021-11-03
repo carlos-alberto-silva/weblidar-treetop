@@ -1,18 +1,13 @@
 ################################################################################
 #               ___________________________________________________            #
-#                                                                              #
-#                               WEB - LiDAR :                                  #
-#               Web Application to processing and visualization                #
-#                             LiDAR data                                       #
+#                                UI.r                                      #
+#                               Weblidar- treetop                              #
+#               Web Application for processing and visualizing                 #
+#                             LiDAR data using R and shiny                     #
 #               ___________________________________________________            #
 #                                                                              #
-#                            Carlos Alberto Silva                              #
-#                              Forest Engineer                                 #
-#                            MSc Forest Resource                               #
-#                         Carlos_engflorestal@outlook.com                      #
-#                              US Forest Service                               #
-#                     Rocky Mountain Reserach Station                          #
 ################################################################################
+
 
 ################################################################################
 # Libraries
@@ -173,7 +168,7 @@ shinyUI(navbarPage(collapsible = FALSE, inverse = T,
                                                                    selectInput("sws", "Filter Windows Size",choices = c("3x3","5x5","7x7","9x9","11x11","13x13","15x15","17x17"),selected="3x3"))),
                                               conditionalPanel(condition="input.filtertype=='Gaussian'",
                                                                div(style = "color:white;margin-top:-15px;margin-left: 2px;",
-                                                                   sliderInput("Sigma","Gaussian Sigma ",0.1,3,1.5,step=0.01,format="#.##")))),
+                                                                   sliderInput("Sigma","Gaussian Sigma ",0.1,3,1.5,step=0.01)))),
 
                              div(style = "color:white;margin-top:-20px",
                                  radioButtons("plotCHM2d", "", list("CHM 2d" = "plotchm2d",
