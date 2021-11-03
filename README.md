@@ -10,7 +10,7 @@
 
 Authors: Carlos Alberto Silva, Andrew T. Hudak, Lee A. Vierling,  Ruben Valbuena, Adrian Cardil, Midhun Mohan, Danilo Roberti Alves de Almeida, Eben N. Broadbent, Angelica M. Almeyda Zambrano, Ben Wilkinson, Ajay Sharma, Jason B. Drake, Paul B. Medley, Jason G. Vogel, Gabriel Atticciati Prata, Jeff Atkins, Caio Hamamura, Carine Klauberg.   
 
-The treetop application provides options for i) detecting individual trees from LiDAR-derived canopy height models (CHM), ii) extract crown-level attributes (e.g. location, crown height and area), iii) assessing forest uniformidy and individual tree spatial distribution, iv) exporting extracted crown-level products, v) visualizing CHM and crown-level products in 2D and 3D.
+The treetop application provides options for i) detecting individual trees from LiDAR-derived canopy height models (CHM), ii) extract crown-level attributes (e.g. location, crown height and area), iii) assessing forest uniformity and individual tree spatial distribution, iv) exporting extracted crown-level products, v) visualizing CHM and crown-level products in 2D and 3D.
 
 # Getting Started
 
@@ -32,7 +32,7 @@ install.packages("treetop")
 # The development version:
 #install.packages("remotes")
 library(remotes)
-install_git("https://github.com/carlos-alberto-silva/weblidar-treetop", dependencies = TRUE)
+install_github("https://github.com/carlos-alberto-silva/weblidar-treetop", dependencies = TRUE)
 
 ```    
 

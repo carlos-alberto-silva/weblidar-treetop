@@ -1,7 +1,7 @@
 Package: treetop
 Type: Package
 Title: A Shiny-Based Application for Extracting Forest Information from LiDAR Data
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: c(
     person("Carlos Alberto", "Silva", email = "carlos_engflorestal@outlook.com", role = c("aut", "cre", "cph")),
     person("Andrew", "Hudak", email = "andrew.hudak@usda.gov", role = "aut"),
@@ -28,22 +28,22 @@ LazyData: true
 Depends:
   R (>= 4.0.0)
 Imports:
-  shiny,
-  RColorBrewer,
-  spatstat.geom,
-  spatstat.core,
-  raster,
-  rasterVis,
-  sp,
-  geometry, 
-  maptools, 
-  rgdal,
-  rgl,
   lidR,
+  maptools, 
   pryr,
+  rglwidget,
   sf,
   stars,
-  rglwidget
+  geometry, 
+  raster,
+  rasterVis,
+  RColorBrewer,
+  rgdal,
+  rgl,
+  shiny,
+  sp,
+  spatstat.core,
+  spatstat.geom
 Suggests:
   rmarkdown
 RoxygenNote: 7.1.2
