@@ -48,13 +48,13 @@ launchApp(launch.browser = TRUE)
 Chang, W., Cheng, J., Allaire, J. J., Xie, Y., & McPherson, J. (2021). shiny:
 Web Application Framework for R. https://cran.r-project.org/web/packages/shiny/index.html
 
-Leite, R.V.; Silva, C.A.; Mohan, M.; Cardil, A.; Almeida, D.R.A.d.; Carvalho, S.d.P.C.e; Jaafar, W.S.W.M.; Guerra-Hernández, J.; Weiskittel, A.; Hudak, A.T.; Broadbent, E.N.; Prata, G.; Valbuena, R.; Leite, H.G.; Taquetti, M.F.; Soares, A.A.V.; Scolforo, H.F.; Amaral, C.H.d.; Dalla Corte, A.P.; Klauberg, C. (2020). Individual Tree Attribute Estimation and Uniformity Assessment in Fast-Growing Eucalyptus spp. Forest Plantations Using Lidar and Linear Mixed-Effects Models. Remote Sens. 12, 3599. https://doi.org/10.3390/rs12213599
+Leite, R.V.; Silva, C.A.; Mohan, M.; Cardil, A.; Almeida, D.R.A.d.; Carvalho, S.d.P.C.e; Jaafar, W.S.W.M.; Guerra-Hernández, J.; Weiskittel, A.; Hudak, A.T.; Broadbent, E.N.; Prata, G.; Valbuena, R.; Leite, H.G.; Taquetti, M.F.; Soares, A.A.V.; Scolforo, H.F.; Amaral, C.H.d.; Dalla Corte, A.P.; Klauberg, C. (2020). Individual Tree Attribute Estimation and Uniformity Assessment in Fast-Growing Eucalyptus spp. Forest Plantations Using Lidar and Linear Mixed-Effects Models. Remote Sens. 12, 3599. doi:10.3390/rs12213599
 
 R Core Team. (2021). R: A Language and Environment for Statistical Computing; R Core Team: Vienna, Austria. https://www.r-project.org/
 
 Silva, C. A., Hudak, A. T., Vierling, L. A., Loudermilk, E. L., O’Brien, J. J., Hiers, J. K., Khosravipour, A. (2016). Imputation of Individual Longleaf Pine (Pinus palustris Mill.) Tree Attributes from Field and LiDAR Data. Canadian Journal of Remote Sensing, 42(5), 554–573. doi:10.1080/07038992.2016.1196582
 
-Roussel, J.R., Auty, D., Coops, N. C., Tompalski, P., Goodbody, T. R. H., Sánchez Meador, A., Bourdon, J.F., De Boissieu, F., Achim, A. (2020). lidR : An R package for analysis of Airborne Laser Scanning (ALS) data. Remote Sensing of Environment, 251 (August), 112061. <doi:10.1016/j.rse.2020.112061>.
+Roussel, J.R., Auty, D., Coops, N. C., Tompalski, P., Goodbody, T. R. H., Sánchez Meador, A., Bourdon, J.F., De Boissieu, F., Achim, A. (2020). lidR : An R package for analysis of Airborne Laser Scanning (ALS) data. Remote Sensing of Environment, 251 (August), 112061. doi:10.1016/j.rse.2020.112061.
 
 # Acknowledgements
 We gratefully acknowledge funding from the National Counsel of Technological and Scientific Development (CNPq) and Department of Defense Strategic Environmental Research and Development Program (SERDP), grant RC-2243, RC19-1064 and RC20-1346. 
