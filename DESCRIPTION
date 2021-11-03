@@ -28,22 +28,21 @@ LazyData: true
 Depends:
   R (>= 4.0.0)
 Imports:
-  lidR,
-  maptools, 
-  pryr,
-  rglwidget,
-  sf,
-  stars,
-  geometry, 
+  shiny,
+  RColorBrewer,
+  spatstat.geom,
+  spatstat.core,
   raster,
   rasterVis,
-  RColorBrewer,
+  sp,
+  geometry, 
   rgdal,
   rgl,
-  shiny,
-  sp,
-  spatstat.core,
-  spatstat.geom
+  lidR,
+  pryr,
+  sf,
+  stars,
+  rglwidget
 Suggests:
   rmarkdown
 RoxygenNote: 7.1.2
