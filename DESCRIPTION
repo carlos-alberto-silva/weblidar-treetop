@@ -24,7 +24,6 @@ Authors@R: c(
 Description: Set of tools implemented into a shiny-based application for extracting and analyzing individual tree forest attributes from LiDAR (Light Detection and Ranging) data.
 License: GPL-3
 Encoding: UTF-8
-LazyData: true
 Depends:
   R (>= 4.1.2)
 Imports:
