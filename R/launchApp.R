@@ -41,7 +41,7 @@
 #'@importFrom geometry convhulln
 #'@importFrom rgdal writeOGR
 #'@importFrom rgl rgl.triangles lines3d axes3d title3d rgl.cur rgl.close
-#'@importFrom lidR tree_detection silva2016
+#'@importFrom lidR find_trees silva2016
 #'@importFrom stars st_as_stars
 #'@importFrom rgl rglwidget
 #'@importFrom rasterVis plot3D
