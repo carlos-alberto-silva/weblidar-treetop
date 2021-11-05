@@ -25,7 +25,7 @@ Description: Set of tools implemented into a shiny-based application for extract
 License: GPL-3
 Encoding: UTF-8
 Depends:
-  R (>= 4.1.2)
+  R (>= 4.0)
 Imports:
   shiny,
   RColorBrewer,
@@ -36,6 +36,7 @@ Imports:
   sp,
   geometry, 
   rgdal,
+  rgeos,
   rgl,
   lidR,
   pryr,
