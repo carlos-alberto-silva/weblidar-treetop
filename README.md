@@ -67,6 +67,9 @@ Silva, C.A.; Hudak, A.T; Vierling, L.A.;  Valbuena, R.; Cardil, A.; Mohan, M.;  
 
 Silva, C.A.; Hudak, A.T; Vierling, L.A.;  Valbuena, R.; Cardil, A.; Mohan, M.;  Almeida, D. A.;  Broadbent,E.N.; Zambrano,A. M. A.; Wilkinson, B., Sharma,A., Drake,J. B.;  Medley,P. B., Vogel, J. G.; Prata,G. A.; Atkins, J.; Hamamura,C.; Klauberg, C. Treetop: A Shiny-based Application for Extracting Forest Information from LiDAR data. Version 0.0.1, accessed on March. 13 2021, available at: https://CRAN.R-project.org/package=treetop
 
+# Example datasets:
+The example datasets used for the cases studies can be downloaded herein: https://drive.google.com/drive/folders/1AjzIMGbI2BPPjnyOI5mSVFsyqbCgwxkm?usp=sharing
+
 # Disclaimer
 **Treetop has been developed using the *Shiny* (Chang et al. 2021) package in R (R Core Team 2021). It comes with no guarantee, expressed or implied, and the authors hold no responsibility for its use or reliability of its outputs.**
 
