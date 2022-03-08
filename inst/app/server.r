@@ -970,7 +970,7 @@ quiet(
               return(NULL)
             } else {
               SHP<-polyCrown
-              proj4string(SHP) <- projecCHM
+              sp::proj4string(SHP) <- projecCHM
               return(SHP)
             }
           })
@@ -1008,7 +1008,7 @@ quiet(
           if (is.null(treelist_treetopsdf@data)){
             return(NULL)
           } else {
-            proj4string(treelist_treetopsdf) <- projecCHM
+            sp::proj4string(treelist_treetopsdf) <- projecCHM
             return(treelist_treetopsdf)
           }
         })
