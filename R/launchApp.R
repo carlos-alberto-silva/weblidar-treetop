@@ -34,10 +34,10 @@
 #'@importFrom shiny runApp
 #'@importFrom RColorBrewer brewer.pal
 #'@importFrom spatstat.geom as.ppp
-#'@importFrom spatstat.core envelope Kest Lest clarkevans.test
+#'@importFrom spatstat.explore envelope Kest Lest clarkevans.test
 #'@import pryr
 #'@importFrom sp coordinates SpatialPointsDataFrame SpatialPolygonsDataFrame merge proj4string
-#'@importFrom raster raster projection res aggregate plot crop area intersect ncell cv 
+#'@importFrom raster raster projection res aggregate plot crop area intersect ncell cv
 #'@importFrom geometry convhulln
 #'@importFrom rgdal writeOGR
 #'@importFrom rgl rgl.triangles lines3d axes3d title3d rgl.cur rgl.close
