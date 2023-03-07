@@ -18,7 +18,7 @@ Authors@R: c(
     person("Paul", "Medley", email = "paul.medley@famu.edu", role = "aut"),
     person("Jason", "Vogel", email = "jvogel@ufl.edu", role = "aut"),
     person("Gabriel", "Prata", email = "gprata@ufl.edu", role = "aut"),
-    person("Jeff", "Atkins", email = "jwatkins6@vcu.edu", role = "aut"),
+    person("Jeff", "Atkins", email = "jeffrey.atkins@usda.gov", role = "aut"),
     person("Caio", "Hamamura", email = "caiohamamura@gmail.com", role = "aut"),
     person("Carine", "Klauberg", email = "carine_klauberg@hotmail.com", role = "aut"))
 Description: Set of tools implemented into a shiny-based application for extracting and analyzing individual tree forest attributes from LiDAR (Light Detection and Ranging) data.
@@ -36,7 +36,6 @@ Imports:
   sp,
   geometry, 
   rgdal,
-  rgeos,
   rgl,
   lidR,
   pryr,
@@ -44,6 +43,6 @@ Imports:
   stars
 Suggests:
   rmarkdown
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 URL: https://github.com/carlos-alberto-silva/weblidar-treetop
 BugReports: https://github.com/carlos-alberto-silva/weblidar-treetop/issues
