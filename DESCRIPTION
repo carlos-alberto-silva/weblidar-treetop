@@ -30,7 +30,7 @@ Imports:
   shiny,
   RColorBrewer,
   spatstat.geom,
-  spatstat.core,
+  spatstat.explore,
   raster,
   rasterVis,
   sp,

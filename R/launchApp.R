@@ -34,7 +34,7 @@
 #'@importFrom shiny runApp
 #'@importFrom RColorBrewer brewer.pal
 #'@importFrom spatstat.geom as.ppp
-#'@importFrom spatstat.core envelope Kest Lest clarkevans.test
+#'@importFrom spatstat.explore envelope Kest Lest clarkevans.test
 #'@import pryr
 #'@importFrom sp coordinates SpatialPointsDataFrame SpatialPolygonsDataFrame merge proj4string
 #'@importFrom raster raster projection res aggregate plot crop area intersect ncell cv 
