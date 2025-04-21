@@ -16,7 +16,7 @@ options(shiny.deprecation.messages=FALSE)
 
 ################################################################################
 
-appDir <- file.path(path.package("treetop", quiet=TRUE),"app")
+appDir <- file.path(path.package("treetop", quiet=TRUE),"inst/app")
 
 ################################################################################
 # ui.r

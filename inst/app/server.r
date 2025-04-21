@@ -384,8 +384,9 @@ quiet(
                                           legend.args=list(text='Height (m)', side=4, font=2, line=2.7, cex=1.5))
 
                              raster::plot(grid_spdf, add=T, axes=F,border="red", lwd=2)
-                             points(sp::coordinates(grid_spdf), cex = 8, pch=16, col="gray")
-                             text(sp::coordinates(grid_spdf),labels=grid_spdf$id, cex = 1.5, col="black")
+                             grid_sf <-st_as_sf(grid_spdf)
+                             points(st_coordinates(grid_sf), cex = 8, pch=16, col="gray")
+                             text(st_coordinates(grid_sf),labels=grid_spdf$id, cex = 1.5, col="black")
                            }
                          })
             par(oldpar)
@@ -418,7 +419,7 @@ quiet(
         isolate({
           output$PLOT3D <- rgl::renderRglwidget({
 
-            while (rgl::rgl.cur() > 0) { try(rgl::rgl.close())}
+            while (rgl::rgl.cur() > 0) { try(rgl::close3d())}
 
             colS<-input$Pallet
             myColorRamp <- function(colors, values) {
@@ -438,7 +439,7 @@ quiet(
               myPal<-rev(col)
             }
 
-            while (rgl::rgl.cur() > 0) { try(rgl::rgl.close()) }
+            while (rgl::rgl.cur() > 0) { try(rgl::close3d()) }
 
             rasterVis::plot3D(chmR0,col=myPal,xlab="",ylab="",zlab="Height (m)")
             #CHM3Dvis1<-CHM3Dvis(chm=chmR0,colR=myPal,xlab="",ylab="",zlab="Height (m)")
@@ -486,7 +487,6 @@ quiet(
       #withProgress(message = paste('LiDAR data processing.This may take a few seconds','The memory used is',round(mem_used()/1024^2), "Mb."), value = 0.1,detail = detail, {
       withProgress(message = 'LiDAR data processing. This may take a few minutes!', min = 0, max = 1, value = 0.1,detail = "", {
 
-        #browser()
         isolate({
           if (area_ha > 1000){
             if (!any(input$tiles_list=="All") & !is.null(input$tiles_list)==TRUE){
@@ -591,11 +591,12 @@ quiet(
             fws=15 }
           if ( input$fws=="17x17"){
             fws=17 }
-          quiet(decTREE <- lidR::find_trees(chmR, lidR::lmf(ws=fws)))
-          treeMer<-cbind(as.data.frame(decTREE@coords),as.numeric(paste0(decTREE@data[,2])))
-          colnames(treeMer)<-c("x","y","Height")
-          tree<-subset(treeMer, treeMer$Height >=Htreshoud)
-          colnames(tree)<-c("x","y","Height")
+          decTREE <- lidR::locate_trees(chmR, lidR::lmf(ws = fws))
+          tree <- decTREE
+          decTREECoords <- sf::st_coordinates(decTREE)
+          tree$x <- decTREECoords[,1]
+          tree$y <- decTREECoords[,2]
+          tree<-subset(tree, tree$Z >= Htreshoud)
           #if(exists("decTREE")){rm(decTREE)}
         })
 
@@ -620,59 +621,77 @@ quiet(
             #http://asprs.org/a/publications/pers/2004journal/may/2004_may_589-604.pdf
 
             if ((input$radiustype)=="VR") {
-              if ((input$equation)=="DC") {treelist_treetop$CR <- 3.09632 + 0.00895*(tree[,3]*tree[,3])}
-              if ((input$equation)=="PI") {treelist_treetop$CR <- 3.75105 + 0.17919*(tree[,3]) + 0.01241*(tree[,3]*(tree[,3]))}
-              if ((input$equation)=="CB") {treelist_treetop$CR<-2.51503+0.00901*(tree[,3]*tree[,3])}
-              if ((input$equation)=="YR") {treelist_treetop$CR<-Ang+ht1*tree[,3]+ht2*(tree[,3]*tree[,3]) + ht3*(tree[,3]*tree[,3]*tree[,3])}
+              if ((input$equation)=="DC") {treelist_treetop$CR <- 3.09632 + 0.00895*(tree$Z*tree$Z)}
+              if ((input$equation)=="PI") {treelist_treetop$CR <- 3.75105 + 0.17919*(tree$Z) + 0.01241*(tree$Z*(tree$Z))}
+              if ((input$equation)=="CB") {treelist_treetop$CR <- 2.51503+0.00901*(tree$Z*tree$Z)}
+              if ((input$equation)=="YR") {treelist_treetop$CR <- Ang+ht1*tree$Z+ht2*(tree$Z*tree$Z) + ht3*(tree$Z*tree$Z*tree$Z)}
             }
 
             treelist_treetop$CA<-pi*(treelist_treetop$CR/2)^2
             treelist_treetop$treeID<-1:nrow(treelist_treetop)
-            treelist_treetopsdf<-sp::SpatialPointsDataFrame(treelist_treetop[,1:2],data=treelist_treetop)
-            treelist_treetopsdf@data<-treelist_treetopsdf@data[,c("x","y","Height","CA","CR","treeID")]
-            polybuffs<-rgeos::gBuffer(sp::SpatialPoints(treelist_treetop[,1:2]), width=treelist_treetop$CR*2, byid=TRUE, id=treelist_treetop$treeID)
-            polyCrown = sp::SpatialPolygonsDataFrame(polybuffs,
-                                                     data=data.frame(treelist_treetop,
-                                                                     row.names=sapply(slot(polybuffs, 'polygons'), function(x) slot(x, 'ID'))))
 
-            polyCrown<-polyCrown[!is.na(polyCrown@data$CA),]
-            treelist_treetopsdf<-treelist_treetopsdf[!is.na(treelist_treetopsdf@data$CA),]
+            points_sf <- treelist_treetop[,c("x","y")]
+            polybuffs <- sf::st_buffer(points_sf, dist = treelist_treetop$CR * 2)
+            polyCrown <- treelist_treetop
+            polyCrown$geometry <- polybuffs$geometry
+            polyCrown<-polyCrown[!is.na(polyCrown$CA),]
+            polyCrown <- polyCrown %>%
+              rename(Height = Z)
 
+            treelist_treetop <- treelist_treetop %>%
+              rename(Height = Z)
+            treelist_treetop <- treelist_treetop[,c("x","y","Height","CA","CR","treeID")]
+            treelist_treetop <- treelist_treetop[!is.na(treelist_treetop$CA),]
+            treelist_treetopsdf <- sf::st_drop_geometry(treelist_treetop)
           })
         }
 
         if ((input$radiustype)=="FR") {
-          #browser()
           treelist_treetop<-tree
-          treelist_treetopsdf<-sp::SpatialPointsDataFrame(treelist_treetop[,1:2],data=treelist_treetop)
-          treelist_treetopsdf@data$treeID<-1:nrow(treelist_treetop)
+          treelist_treetop$treeID<-1:nrow(treelist_treetop)
+
+          #load raster into memory
+          chmR0 <- chmR0 * 1
+
           isolate({
-            crowns=lidR::silva2016(chmR0, treelist_treetopsdf,max_cr_factor = input$maxcrown,exclusion = input$exclusion,
+            crowns=lidR::silva2016(chmR0, treelist_treetop, max_cr_factor = input$maxcrown,exclusion = input$exclusion,
                                    ID = "treeID")()
           })
+
           contour_sf <- sf::st_as_sf(stars::st_as_stars(crowns),as_points = FALSE, merge = TRUE)
-          contour<-sf::as_Spatial(contour_sf)
 
+          colnames(contour_sf)[1]<-"treeID"
+          merged_contours <- contour_sf %>%
+            group_by(treeID) %>%
+            summarise(geometry = sf::st_union(geometry))
 
-          #contour = raster::rasterToPolygons(crowns, dissolve = TRUE)
-          #rm(crowns)
-          colnames(contour@data)[1]<-"treeID"
-          contour@data$CA<-raster::area(contour)
-          contour@data$CR<-sqrt(contour@data$CA/pi)
-          #contour@data$CRT<-CL/CH
-          #contour@data$CFI<-CL/CW
-          #contour@data$CTI<-CW/CL
-          #contour@data$CSR<-CW/CH
-          #contour <- contour[order(contour$treeID, contour$CA, decreasing=TRUE),]
-          #contour <- contour[!duplicated(contour$treeID),]
-          contour<-raster::intersect(contour,treelist_treetopsdf)
-          polyCrown<-sp::merge(contour,treelist_treetopsdf@data, by="treeID")
-          polyCrown@data<-polyCrown@data[,c("x","y","Height","CA","CR","treeID")]
-          polyCrown<-polyCrown[!is.na(polyCrown@data$CA),]
-          treelist_treetopsdf<-sp::merge(treelist_treetopsdf,contour@data, by="treeID")
-          treelist_treetopsdf<-treelist_treetopsdf[!is.na(treelist_treetopsdf@data$CA),]
-          treelist_treetopsdf@data<-treelist_treetopsdf@data[,c("x","y","Height","CA","CR","treeID")]
-          treelist_treetop<-treelist_treetopsdf@data
+          joined_sf <- sf::st_join(contour_sf, treelist_treetop, join = sf::st_contains)
+          contour_sf <- sf::st_make_valid(joined_sf)
+
+          contour_sf <- contour_sf[!is.na(contour_sf$treeID.y),]
+          colnames(contour_sf)[1]<-"treeID"
+
+          contour_sf$CA <- sf::st_area(contour_sf)
+          contour_sf$CR <- sqrt(as.numeric(contour_sf$CA) / pi)
+
+          polyCrown <- contour_sf
+          polyCrown <- polyCrown %>%
+            rename(Height = Z)
+
+          polyCrown <- polyCrown[!is.na(polyCrown$CA),]
+
+          tempdf <- sf::st_drop_geometry(contour_sf)
+          merged_sf <- treelist_treetop %>%
+            left_join(tempdf, by = "treeID")
+
+          treelist_treetop <- merged_sf
+          treelist_treetop <- treelist_treetop[!is.na(treelist_treetop$CA),]
+
+          treelist_treetop <- treelist_treetop %>%
+            rename(Height = Z.x, x = x.x, y = y.x)
+
+          treelist_treetop <- treelist_treetop[,c("x","y","Height","CA","CR","treeID")]
+          treelist_treetopsdf <- sf::st_drop_geometry(treelist_treetop)
         }
 
         incProgress(0.4, message = "Preparing for rendering...1%")
@@ -681,19 +700,14 @@ quiet(
         output$hist <- renderPlot({
           oldpar = par(no.readonly = TRUE)
           if ((input$plotProfile)=="plotRipley") {
-            S <- treelist_treetopsdf
-            sp::proj4string(S) <- projecCHM
-            bb <- sp::bbox(S)
+            S <- treelist_treetop
+            sf::st_crs(S) <- sf::st_crs(projecCHM)
+            bb <- sf::st_bbox(S)
             colnames(bb) <- NULL
-            W  <- spatstat.geom::owin(bb[1,], bb[2,])
-            nc <- ncol(S)
-            marks <- if(nc == 0) NULL else slot(S, "data")
-            cc <- sp::coordinates(S)
-            #P<-maptools::as.ppp.SpatialPointsDataFrame(S)
-            P<-spatstat.geom::ppp(cc[,1], cc[,2], window = W, marks = marks, check=FALSE)
-            #SP <- as(S, "SpatialPoints")
-            #P  <- as(SP, "ppp")
-            P <- spatstat.geom::as.ppp(sp::coordinates(S), raster::extent(S)[])
+            W  <- spatstat.geom::owin(c(bb$xmin,bb$xmax), c(bb$ymin, bb$ymax))
+            cc <- sf::st_coordinates(S)
+
+            P <- spatstat.geom::as.ppp(cc, bb)
             K <- spatstat.explore::envelope(P, spatstat.explore::Kest, nsim = 99, verbose = F)
             L <- spatstat.explore::envelope(P, spatstat.explore::Lest, nsim = 99, verbose = F)
             CE <- spatstat.explore::clarkevans.test(P)
@@ -716,7 +730,7 @@ quiet(
             polygon(dens$y,dens$x, col=input$profColor, border="black")
             legend("topright","Crown-level metrics", bty="n", text.font=2, cex=1.5)
             boxplot(chm_hts, cex.lab=2, ylim=c(0,max(chm_hts)*1.3),horizontal=F, col=input$profColor,ylab="Height (m)")
-            boxplot(treelist_treetopsdf@data$CA,ylim=c(0,max(treelist_treetopsdf@data$CA)*1.3),cex.lab=2, horizontal=F, col=input$profColor,ylab="Crown Area (m2)")
+            boxplot(treelist_treetopsdf$CA,ylim=c(0,max(treelist_treetopsdf$CA)*1.3),cex.lab=2, horizontal=F, col=input$profColor,ylab="Crown Area (m2)")
           }
           par(oldpar)
         },height = 360,width=850)
@@ -741,7 +755,7 @@ quiet(
               lines(dens$y,dens$x,col="black",lwd=1)
               polygon(dens$y,dens$x, col=input$profColor, border="black")
               boxplot(chm_hts, cex.lab=2, ylim=c(0,max(chm_hts)*1.3),horizontal=F, col=input$profColor,ylab="Height (m)")
-              boxplot(treelist_treetopsdf@data$CA,ylim=c(0,max(treelist_treetopsdf@data$CA)*1.3),cex.lab=2, horizontal=F, col=input$profColor,ylab="Crown Area (m2)")
+              boxplot(treelist_treetopsdf$CA,ylim=c(0,max(treelist_treetopsdf$CA)*1.3),cex.lab=2, horizontal=F, col=input$profColor,ylab="Crown Area (m2)")
               par(oldpar)
               dev.off()
             },
@@ -760,18 +774,12 @@ quiet(
               png(file, width = 1200, height = 600, units = "px", pointsize = 12,
                   bg = "white", res = 100)
               S <- treelist_treetopsdf
-              sp::proj4string(S) <- projecCHM
-              bb <- sp::bbox(S)
+              sf::st_crs(S) <- sf::st_crs(projecCHM)
+              bb <- sf::st_bbox(S)
               colnames(bb) <- NULL
               W  <- spatstat.geom::owin(bb[1,], bb[2,])
-              nc <- ncol(S)
-              marks <- if(nc == 0) NULL else slot(S, "data")
-              cc <- sp::coordinates(S)
-              #P<-maptools::as.ppp.SpatialPointsDataFrame(S)
-              P<-spatstat.geom::ppp(cc[,1], cc[,2], window = W, marks = marks, check=FALSE)
-              #SP <- as(S, "SpatialPoints")
-              #P  <- as(SP, "ppp")
-              P <- spatstat.geom::as.ppp(sp::coordinates(S), raster::extent(S)[])
+              cc <- sf::st_coordinates(S)
+              P <- spatstat.geom::as.ppp(cc, bb)
               K <- spatstat.explore::envelope(P, spatstat.explore::Kest, nsim = 99, verbose = F)
               L <- spatstat.explore::envelope(P, spatstat.explore::Lest, nsim = 99, verbose = F)
               CE <- spatstat.explore::clarkevans.test(P)
@@ -798,7 +806,7 @@ quiet(
               png(file, width = 700, height = 600, units = "px", pointsize = 12,
                   bg = "white", res = 100)
 
-              size <- treelist_treetopsdf@data$Height
+              size <- treelist_treetopsdf$Height
               L.mean <-  max(cumsum(sort(size[size>=mean(size)],T)/sum(size)))
               GC <- GiniCoeff(size)
               oldpar = par(mar=c(4,4,2,2))
@@ -846,7 +854,7 @@ quiet(
         isolate({
           output$CHMplot2D <- renderPlot({
             if ((input$plotCHM2d)=="plotlorenzcurve") {
-              size <- treelist_treetopsdf@data$Height
+              size <- treelist_treetopsdf$Height
               L.mean <-  max(cumsum(sort(size[size>=mean(size)],T)/sum(size)))
               GC <- GiniCoeff(size)
 
@@ -904,11 +912,12 @@ quiet(
                 col<-RColorBrewer::brewer.pal(9,colS)
                 col.rev<-rev(col)
               }
-              tree.xy<-data.frame(tree[,1:2])
+              tree.xy <- data.frame(tree$x, tree$y)
               tree.xy <- data.frame(na.omit(tree.xy))
               raster::plot(chmR0,col=col.rev,axes = T, xlab="",ylab="",useRaster=F)
               points(tree.xy, pch=16, cex = 1.5, col=input$TopColor,  type = "p")
-              raster::plot(polyCrown, add=T, border=input$CrownColor, lwd=2)
+              polyCrownTemp<-polyCrown[, c("treeID","geometry")]
+              raster::plot(polyCrownTemp, add=T, border=input$CrownColor, lwd=2, col=NA)
             }
           },height = 600,width=600)
         })
@@ -942,12 +951,14 @@ quiet(
                 col<-RColorBrewer::brewer.pal(9,colS)
                 col.rev<-rev(col)
               }
-              tree.xy<-data.frame(tree[,1:2])
+              tree.xy <- data.frame(tree$x, tree$y)
               tree.xy <- data.frame(na.omit(tree.xy))
               raster::plot(chmR0,col=col.rev,axes = T, xlab="UTM Easting",ylab="UTM Northing")
               points(tree.xy, pch=16, cex = 1.5, col=input$TopColor,  type = "p")
-              raster::plot(polyCrown, add=T, border=input$CrownColor, lwd=2)
-              dev.off()},
+              polyCrownTemp<-polyCrown[, c("treeID","geometry")]
+              raster::plot(polyCrownTemp, add=T, border=input$CrownColor, lwd=2, col=NA)
+              dev.off()
+            },
             contentType = 'image/png'
           )})
 
@@ -957,9 +968,8 @@ quiet(
             if (is.null(treelist_treetop)){
               return(NULL)
             } else {
-
-              SHP<-polyCrown
-              return(SHP)
+              sf::st_crs(polyCrown) <- sf::st_crs(projecCHM)
+              return(polyCrown)
             }
           })
 
@@ -969,9 +979,8 @@ quiet(
             if (is.null(treelist_treetop)){
               return(NULL)
             } else {
-              SHP<-polyCrown
-              sp::proj4string(SHP) <- projecCHM
-              return(SHP)
+              sf::st_crs(polyCrown) <- sf::st_crs(projecCHM)
+              return(polyCrown)
             }
           })
         }
@@ -987,7 +996,7 @@ quiet(
             }
 
             oldwd <- setwd(tempdir())
-            rgdal::writeOGR(createShp(), dsn="TreeCrownExport.shp", layer="TreeCrownExport", driver="ESRI Shapefile")
+            sf::st_write(createShp(), dsn="TreeCrownExport.shp", driver="ESRI Shapefile")
             zip(zipfile='TreeCrownExport.zip', files=Sys.glob("TreeCrownExport.*"))
             file.copy("TreeCrownExport.zip", file)
             if (length(Sys.glob("TreeCrownExport.*"))>0){
@@ -1005,11 +1014,11 @@ quiet(
               downloadButton('downloadShpXY', 'Tree Location (.shp)')) })
 
         createShpXY <- reactive({
-          if (is.null(treelist_treetopsdf@data)){
+          if (is.null(treelist_treetop)){
             return(NULL)
           } else {
-            sp::proj4string(treelist_treetopsdf) <- projecCHM
-            return(treelist_treetopsdf)
+            sf::st_crs(treelist_treetop) <- sf::st_crs(projecCHM)
+            return(treelist_treetop)
           }
         })
 
@@ -1021,8 +1030,7 @@ quiet(
               file.remove(Sys.glob("TreeLocationExport.*"))
             }
             oldwd <- setwd(tempdir())
-            rgdal::writeOGR(createShpXY(), dsn="TreeLocationExport.shp",
-                            layer="TreeLocationExport", driver="ESRI Shapefile")
+            sf::st_write(createShpXY(), dsn="TreeLocationExport.shp", driver="ESRI Shapefile")
             zip(zipfile='TreeLocationExport.zip', files=Sys.glob("TreeLocationExport.*"))
             file.copy("TreeLocationExport.zip", file)
             if (length(Sys.glob("TreeLocationExport.*"))>0){
@@ -1040,7 +1048,7 @@ quiet(
         isolate({
           output$PLOT3D <- rgl::renderRglwidget({
 
-            while (rgl::rgl.cur() > 0) { try(rgl::rgl.close())}
+            while (rgl::rgl.cur() > 0) { try(rgl::close3d())}
 
             if ((input$plot3Dradio)=="plotCHM3D") {
               colS<-input$Pallet
@@ -1061,7 +1069,7 @@ quiet(
                 myPal<-rev(col)
               }
 
-              while (rgl::rgl.cur() > 0) { try(rgl::rgl.close()) }
+              while (rgl::rgl.cur() > 0) { try(rgl::close3d()) }
 
               rasterVis::plot3D(chmR0,col=myPal,xlab="",ylab="",zlab="Height (m)")
               #CHM3Dvis1<-CHM3Dvis(chm=chmR0,colR=myPal,xlab="",ylab="",zlab="Height (m)")
@@ -1073,18 +1081,18 @@ quiet(
 
             } else {
 
-              n<-nrow(treelist_treetopsdf@data)
-              xl<-max(treelist_treetopsdf@data[,1])-treelist_treetopsdf@data[,1]
-              yl<-max(treelist_treetopsdf@data[,2])-treelist_treetopsdf@data[,2]
+              n<-nrow(treelist_treetopsdf)
+              xl<-max(treelist_treetopsdf$x)-treelist_treetopsdf$x
+              yl<-max(treelist_treetopsdf$y)-treelist_treetopsdf$y
 
-              CBHp<-treelist_treetopsdf@data$Height*0.4
-              CL<-treelist_treetopsdf@data$Height - CBHp
+              CBHp<-treelist_treetopsdf$Height*0.4
+              CL<-treelist_treetopsdf$Height - CBHp
 
               if (input$plotSurface=="solid") { shape=2;}
               if (input$plotSurface=="mesh") { shape=1; }
               if (input$plotSurface=="lines") { shape=3}
 
-              if (nrow(treelist_treetopsdf@data)>2000){
+              if (nrow(treelist_treetopsdf)>2000){
 
                 detail2<-'Note: Number of trees is higher than 2000. This may take several minutes. It is recommended to use the line objects instead.'
               } else {
@@ -1092,23 +1100,23 @@ quiet(
 
               }
 
-              while (rgl::rgl.cur() > 0) { while (rgl::rgl.cur() > 0) { try(rgl::rgl.close()) } }
-              withProgress(message = paste('Rendering',nrow(treelist_treetopsdf@data),"trees in 3D."), value = 0.1,detail = detail2, {
+              while (rgl::rgl.cur() > 0) { while (rgl::rgl.cur() > 0) { try(rgl::close3d()) } }
+              withProgress(message = paste('Rendering',nrow(treelist_treetopsdf),"trees in 3D."), value = 0.1,detail = detail2, {
                 Sys.sleep(10)
 
                 for(i in 1:n) {
 
                   rgl::bg3d(col = "white")
-                  vec=rbind(c(xl[i],yl[i], 0), c(xl[i], yl[i],treelist_treetopsdf@data$Height[i]))
+                  vec=rbind(c(xl[i],yl[i], 0), c(xl[i], yl[i],treelist_treetopsdf$Height[i]))
                   rgl::segments3d(vec, col=" brown",size=2)#, lwd=2)
 
 
-                  if (treelist_treetopsdf@data$Height[i]<=2){crowncolor="green"}
-                  if (treelist_treetopsdf@data$Height[i]> 2 & treelist_treetopsdf@data$Height[i]<=7){crowncolor="green3"}
-                  if (treelist_treetopsdf@data$Height[i]>7){crowncolor="darkgreen"}
+                  if (treelist_treetopsdf$Height[i]<=2){crowncolor="green"}
+                  if (treelist_treetopsdf$Height[i]> 2 & treelist_treetopsdf$Height[i]<=7){crowncolor="green3"}
+                  if (treelist_treetopsdf$Height[i]>7){crowncolor="darkgreen"}
 
 
-                  ptree<-TreesModel(crownshape = input$plotShape, nz=15, nalpha=15, CL = CL[i], CR =treelist_treetopsdf@data$CR[i],
+                  ptree<-TreesModel(crownshape = input$plotShape, nz=15, nalpha=15, CL = CL[i], CR =treelist_treetopsdf$CR[i],
                                     HCB = CBHp[i], x0 =xl[i], y0 = yl[i], crowncolor = crowncolor, shape=shape)
 
                   #browser()
@@ -1182,16 +1190,16 @@ quiet(
 
         isolate ({
           NameExp<-c("Number of trees","Hmax","Hmean","Hmin","Hmedian","Hvar","Hsd","Hcv","Hkurtosis","Hskewness")
-          MetricsExp<-c(length(treelist_treetopsdf@data$Height),
-                        round(max(treelist_treetopsdf@data$Height),digits=2),
-                        round(mean(treelist_treetopsdf@data$Height),digits=2),
-                        round(min(treelist_treetopsdf@data$Height),digits=2),
-                        round(median(treelist_treetopsdf@data$Height),digits=2),
-                        round(var(treelist_treetopsdf@data$Height),digits=2),
-                        round(sd(treelist_treetopsdf@data$Height),digits=2),
-                        round(cv(treelist_treetopsdf@data$Height),digits=2),
-                        round(kurtosis(treelist_treetopsdf@data$Height),digits=2),
-                        round(skewness(treelist_treetopsdf@data$Height),digits=2))
+          MetricsExp<-c(length(treelist_treetop$Height),
+                        round(max(treelist_treetop$Height),digits=2),
+                        round(mean(treelist_treetop$Height),digits=2),
+                        round(min(treelist_treetop$Height),digits=2),
+                        round(median(treelist_treetop$Height),digits=2),
+                        round(var(treelist_treetop$Height),digits=2),
+                        round(sd(treelist_treetop$Height),digits=2),
+                        round(cv(treelist_treetop$Height),digits=2),
+                        round(kurtosis(treelist_treetop$Height),digits=2),
+                        round(skewness(treelist_treetop$Height),digits=2))
 
           LiDARsummary<-data.frame(cbind(NameExp,MetricsExp))
           colnames(LiDARsummary)<-c("Parameters", "Value")
