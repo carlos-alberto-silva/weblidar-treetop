@@ -36,10 +36,8 @@
 #'@importFrom spatstat.geom as.ppp
 #'@importFrom spatstat.explore envelope Kest Lest clarkevans.test
 #'@import pryr
-#'@importFrom sp coordinates SpatialPointsDataFrame SpatialPolygonsDataFrame merge proj4string
 #'@importFrom raster raster projection res aggregate plot crop area intersect ncell cv
 #'@importFrom geometry convhulln
-#'@importFrom rgdal writeOGR
 #'@importFrom rgl rgl.triangles lines3d axes3d title3d rgl.cur rgl.close
 #'@importFrom lidR find_trees silva2016
 #'@importFrom stars st_as_stars
@@ -47,6 +45,6 @@
 #'@importFrom rasterVis plot3D
 #'@importFrom sf st_as_sf as_Spatial
 launchApp<-function(...){
-  appDir <- file.path(path.package("treetop", quiet=TRUE),"app")
+  appDir <- file.path(path.package("treetop", quiet=TRUE),"inst/app")
   shiny::runApp(appDir, ...)
 }
