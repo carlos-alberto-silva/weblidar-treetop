@@ -35,7 +35,6 @@
 #'@importFrom RColorBrewer brewer.pal
 #'@importFrom spatstat.geom as.ppp
 #'@importFrom spatstat.explore envelope Kest Lest clarkevans.test
-#'@import pryr
 #'@importFrom raster raster projection res aggregate plot crop area intersect ncell cv
 #'@importFrom geometry convhulln
 #'@importFrom rgl rgl.triangles lines3d axes3d title3d rgl.cur rgl.close
