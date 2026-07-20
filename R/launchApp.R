@@ -44,6 +44,6 @@
 #'@importFrom rasterVis plot3D
 #'@importFrom sf st_as_sf as_Spatial
 launchApp<-function(...){
-  appDir <- file.path(path.package("treetop", quiet=TRUE),"inst/app")
+  appDir <- file.path(path.package("treetop", quiet=TRUE),"app")
   shiny::runApp(appDir, ...)
 }
